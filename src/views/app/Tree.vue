@@ -18,7 +18,18 @@
                 <i class="fas fa-user-tie" :class="{'act': node.activated, 'aff': node.affiliated}"></i>
                 <i class="fas fa-gem" :class="node.rank"></i> <br>
                 {{ node.name }}
-                <p>total: {{ node.closed_points_arr }}</p>
+                <p>total: 
+  <span v-if="Array.isArray(node.closed_points_arr)">
+    [
+      {{ node.closed_points_arr
+          .map(x => Number(x) === 0 ? '0' : Number(x).toFixed(2))
+          .join(', ') }}
+    ]
+  </span>
+  <span v-else>
+    {{ node.closed_points_arr }}
+  </span>
+</p>
               </span>
 
               <ul v-if="node._childs">
