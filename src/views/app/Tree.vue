@@ -202,19 +202,19 @@ export default {
         this.count = 0
       }, 300)
     },
-    async GET(id) {
-      console.log('GET ... ', id)
-      this.loading = true
+    // async GET(id) {
+    //   console.log('GET ... ', id)
+    //   this.loading = true
 
-      // GET data by id
-      const { data } = await api.tree(this.session, id); console.log({ data })
+    //   // GET data by id
+    //   const { data } = await api.tree(this.session, id); console.log({ data })
 
-      this.loading = false
+    //   this.loading = false
 
-      // success
-      // this.nodes = data.nodes
-      this.node = data.node
-    },
+    //   // success
+    //   // this.nodes = data.nodes
+    //   this.node = data.node
+    // },
 
     closed() {
       console.log('closed ...')
