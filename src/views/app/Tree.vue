@@ -163,64 +163,64 @@ export default {
   },
   async created() {
     // GET data
-//     const { data } = await api.tree(this.session, null); console.log({ data })
+    const { data } = await api.tree(this.session, null); console.log({ data })
 
-//     this.loading = false
+    this.loading = false
 
-//     // error
-//     if(data.error && data.msg == 'invalid session') this.$router.push('/login')
-//     if(data.error && data.msg == 'unverified user') this.$router.push('/verify')
+    // error
+    if(data.error && data.msg == 'invalid session') this.$router.push('/login')
+    if(data.error && data.msg == 'unverified user') this.$router.push('/verify')
 
-//     // success
-//     this.$store.commit('SET_NAME',       data.name)
-//     this.$store.commit('SET_LAST_NAME',  data.lastName)
-//     this.$store.commit('SET_AFFILIATED', data.affiliated)
-//     this.$store.commit('SET__ACTIVATED',  data._activated)
-//     this.$store.commit('SET_ACTIVATED',  data.activated)
-//     this.$store.commit('SET_PLAN',       data.plan)
-//     this.$store.commit('SET_COUNTRY',    data.country)
-//     this.$store.commit('SET_PHOTO',      data.photo)
-//     this.$store.commit('SET_TREE',       data.tree)
+    // success
+    this.$store.commit('SET_NAME',       data.name)
+    this.$store.commit('SET_LAST_NAME',  data.lastName)
+    this.$store.commit('SET_AFFILIATED', data.affiliated)
+    this.$store.commit('SET__ACTIVATED',  data._activated)
+    this.$store.commit('SET_ACTIVATED',  data.activated)
+    this.$store.commit('SET_PLAN',       data.plan)
+    this.$store.commit('SET_COUNTRY',    data.country)
+    this.$store.commit('SET_PHOTO',      data.photo)
+    this.$store.commit('SET_TREE',       data.tree)
 
-//     this.id   = data.id
-//     // this.nodes = data.nodes
-//     this.node = data.node
-//     this.selec_node = data.node
-//   },
-//   methods: {
-//     click(node) {
-//       this.count += 1
-//       setTimeout(() => {
-//         if(this.count == 1) {
-//           console.log('click ...')
-//           this.selec_node = node
-//           this.open = true
-//         } else {
-//           console.log('double click ...')
-//           this.GET(node.id)
-//         }
-//         this.count = 0
-//       }, 300)
-//     },
-//     // async GET(id) {
-//     //   console.log('GET ... ', id)
-//     //   this.loading = true
+    this.id   = data.id
+    // this.nodes = data.nodes
+    this.node = data.node
+    this.selec_node = data.node
+  },
+  methods: {
+    click(node) {
+      this.count += 1
+      setTimeout(() => {
+        if(this.count == 1) {
+          console.log('click ...')
+          this.selec_node = node
+          this.open = true
+        } else {
+          console.log('double click ...')
+          this.GET(node.id)
+        }
+        this.count = 0
+      }, 300)
+    },
+    async GET(id) {
+      console.log('GET ... ', id)
+      this.loading = true
 
-//     //   // GET data by id
-//     //   const { data } = await api.tree(this.session, id); console.log({ data })
+      // GET data by id
+      const { data } = await api.tree(this.session, id); console.log({ data })
 
-//     //   this.loading = false
+      this.loading = false
 
-//     //   // success
-//     //   // this.nodes = data.nodes
-//     //   this.node = data.node
-//     // },
+      // success
+      // this.nodes = data.nodes
+      this.node = data.node
+    },
 
-//     closed() {
-//       console.log('closed ...')
-//       this.open = false
-//     },
-   }
+    closed() {
+      console.log('closed ...')
+      this.open = false
+    },
+  }
 };
 </script>
 
