@@ -125,7 +125,7 @@ const TreeNode = {
         (this.node.childs && this.node.childs.length > 0) ?
           h('i', {
             class: ['fas', this.expanded ? 'fa-minus-square' : 'fa-plus-square'],
-            style: { cursor: 'pointer', marginRight: '6px', color: '#00bcd4', fontSize: '18px', position: 'absolute', left: '-24px', top: '8px' },
+            style: { cursor: 'pointer', marginRight: '6px', color: '#00bcd4', fontSize: '18px', position: 'absolute', left: '3px', top: '8px' },
             on: { click: this.expandNode }
           }) : null,
         h('i', { class: ['fas', 'fa-user-tie', { act: this.node.activated, aff: this.node.affiliated }], style: { fontSize: '24px', marginRight: '6px' } }),

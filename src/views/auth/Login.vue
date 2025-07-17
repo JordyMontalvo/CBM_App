@@ -37,7 +37,7 @@
         <i
           class="icon fa-solid fa-user-tie"
           style="
-            margin-top: 14px;
+            margin-top: 19px;
             margin-left: -33px;
             cursor: pointer;
             padding: 4px;
@@ -289,6 +289,43 @@ export default {
 };
 </script>
 <style scoped>
+.social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.social-icon {
+  margin-right: 10px;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 24px;
+  transition: box-shadow 0.2s, background 0.2s;
+  background: #9C5AD8;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .social-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    line-height: 32px;
+    font-size: 18px;
+    margin-right: 6px;
+  }
+}
+.social-icon:hover {
+  box-shadow: 0 2px 8px rgba(67, 7, 140, 0.15);
+  background: #f3eaff;
+  color: #9C5AD8;
+}
 .login-button {
   border-radius: 29px;
   width: 345px;
@@ -371,9 +408,17 @@ export default {
     display: none;
   }
 }
-@media (max-width: 1260px) {
+@media (max-width: 600px) {
   .login-button {
-    width: 280px;
+    width: 90vw;
+    min-width: 180px;
+    max-width: 320px;
+    margin-left: 0;
+  }
+  .google-login-btn {
+    width: 90vw;
+    min-width: 180px;
+    max-width: 320px;
   }
 }
 @media (max-width: 1260px) {

@@ -90,4 +90,33 @@ body {
   margin: 0;
   padding: 0;
 }
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .login-left, .login-right {
+    width: 100%;
+    min-height: 220px;
+    padding-left: 0;
+    margin-left: 0;
+    justify-content: center;
+    text-align: center;
+  }
+  .login-left-content {
+    text-align: center;
+    margin: 0 auto;
+  }
+  .logo-login {
+    width: 180px;
+    margin-left: 0;
+  }
+  .login-left h1 {
+    font-size: 2.5em;
+  }
+  .login-right {
+    min-height: 400px;
+    padding: 20px 0;
+  }
+}
 </style>
