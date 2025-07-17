@@ -23,7 +23,7 @@
         />
       </div>
       <div > 
-        <label class="label-login-2" for="dni">DNI:</label>
+        <label class="label-login-2" for="dni">Usuario:</label>
         <input
           id="dni"
           class="input"
