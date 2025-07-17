@@ -7,102 +7,48 @@
 
     <div v-if="!loading">
 
+      <p style="font-weight:bold; font-size:18px; margin-bottom:10px;">Total de puntos grupal: {{ node.total_points }}</p>
+
+      <div v-if="children_points && children_points.length">
+        <p style="margin-bottom: 0; font-weight: bold;">Puntos por cada hijo:</p>
+        <ul style="margin-top: 0;">
+          <li v-for="(pts, idx) in children_points" :key="idx">
+            Hijo {{ idx + 1 }}: {{ pts }}
+          </li>
+        </ul>
+      </div>
+
       <div id="body">
 
         <div class="tree-container">
           <i v-if="node.parent && node.id != id" class="fas fa-arrow-left" @click="GET(node.parent)" style="position: absolute; right: 0; margin-right: 80px; z-index: 1;"></i>
           <ul class="tree">
-            <li>
-
-              <span @click="click(node)">
-                <i class="fas fa-user-tie" :class="{'act': node.activated, 'aff': node.affiliated}"></i>
-                <i class="fas fa-gem" :class="node.rank"></i> <br>
-                {{ node.name }}
-                <p>total: 
-  <span v-if="Array.isArray(node.closed_points_arr)">
-    [
-      {{ node.closed_points_arr
-          .map(x => Number(x) === 0 ? '0' : Number(x).toFixed(2))
-          .join(', ') }}
-    ]
-  </span>
-  <span v-else>
-    {{ node.closed_points_arr }}
-  </span>
-</p>
-              </span>
-
-              <ul v-if="node._childs">
-                <li v-for="_child1 in node._childs">
-
-                  <span @click="click(_child1)">
-                    <i class="fas fa-user-tie" :class="{'act': _child1.activated, 'aff': _child1.affiliated}"></i>
-                    <i class="fas fa-gem" :class="_child1.rank"></i> <br>
-                    {{ _child1.name }} <br>
-                    <small>compras: {{ _child1.points }}</small> <br>
-                    <small v-if="_child1.affiliation_points">afill: {{ _child1.affiliation_points }}</small>
-                  </span>
-
-                  <ul v-if="_child1._childs">
-                    <li v-for="_child2 in _child1._childs">
-
-                      <span @click="click(_child2)">
-                        <i class="fas fa-user-tie" :class="{'act': _child2.activated, 'aff': _child2.affiliated}"></i>
-                        <i class="fas fa-gem" :class="_child2.rank"></i> <br>
-                        {{ _child2.name }} <br>
-                        <small>compras: {{ _child2.points }}</small> <br>
-                        <small v-if="_child2.affiliation_points">afill: {{ _child2.affiliation_points }}</small>
-                      </span>
-
-                      <ul v-if="_child2._childs">
-                        <li v-for="_child3 in _child2._childs">
-
-                          <span @click="click(_child3)">
-                            <i class="fas fa-user-tie" :class="{'act': _child3.activated, 'aff': _child3.affiliated}"></i>
-                            <i class="fas fa-gem" :class="_child3.rank"></i> <br>
-                            {{ _child3.name }} <br>
-                            <small>compras: {{ _child3.points }}</small> <br>
-                            <small v-if="_child3.affiliation_points">afill: {{ _child3.affiliation_points }}</small>
-                          </span>
-
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
+            <tree-node :node="node" :session="session" :get-node="GET_NODE" :selected-id="selectedId" @select="click" />
           </ul>
         </div>
       </div>
 
       <div class="modal" :class="{ open }" @click="closed">
         <div class="inner" @click.stop="">
-          <img class="photo" :src="selec_node.photo">
-          <p style="text-align: center;">{{ selec_node.country }}</p>
+          <img class="photo" :src="selec_node.photo" style="display:block; margin:auto; border-radius:50%; width:100px; height:100px; object-fit:cover; border:3px solid #00bcd4;">
+          <p style="text-align: center; font-size:18px; font-weight:bold; margin:8px 0 0 0;">{{ selec_node.name }} {{ selec_node.lastName }}</p>
+          <p style="text-align: center; color:#888; margin:0 0 8px 0;">{{ selec_node.country }}</p>
+          <p><b>ID:</b> {{ selec_node.dni }}</p>
+          <p><b>Teléfono:</b> {{ selec_node.phone }}</p>
+          <p><b>Correo:</b> {{ selec_node.email }}</p>
+          <p><b>Rango Cerrado:</b> {{ selec_node._rank | _rank }}</p>
+          <p><b>Puntos personales:</b> {{ selec_node.points }}</p>
+          <p><b>Puntos grupales:</b> {{ selec_node.total_points !== undefined ? selec_node.total_points : '—' }}</p>
           <br>
-          <p>ID: {{ selec_node.dni }}</p>
-          <p>Nombre: {{ selec_node.name }}</p>
-          <p>Apellido: {{ selec_node.lastName }}</p>
-          <p>Teléfono: {{ selec_node.phone }}</p>
-          <p>Correo: {{ selec_node.email }}</p>
-          <p>Rango Cerrado: {{ selec_node._rank | _rank }}</p>
-          <p>Rango Actual:  {{ selec_node.rank | _rank }}</p>
-          <p>Siguiente Rango: {{ selec_node.next_rank.name | _rank }}</p>
-          <!-- <p>Rango Próximo: Hans Evanglelista</p> -->
-          <p>Puntos Personales: {{ selec_node.points }}</p>
-          <p>Puntos Grupales: {{ selec_node.closed_points_arr }}</p>
-          <br>
-          <p>Últimas compras:</p>
-          <br>
-          <table>
+          <p style="font-weight:bold;">Últimas compras:</p>
+          <table style="width:100%; font-size:13px;">
             <thead>
               <tr>
                 <th>Fecha</th><th>Monto</th><th>Puntos</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="activation in selec_node.last_activations.slice().reverse()">
+              <tr v-for="activation in (selec_node.last_activations || []).slice().reverse()">
                 <td>{{ activation.date | date }}</td>
                 <td>{{ activation.price }}</td>
                 <td>{{ activation.points }}</td>
@@ -120,18 +66,110 @@
 import App from '@/views/layouts/App'
 import api from '@/api'
 
+// Componente recursivo para renderizar el árbol
+const TreeNode = {
+  name: 'TreeNode',
+  props: ['node', 'session', 'getNode', 'selectedId'],
+  data() {
+    return {
+      expanded: false,
+      loading: false,
+      children: this.node.children || [],
+      children_points: [], // Nuevo: para guardar los puntos por hijo
+    }
+  },
+  computed: {
+    isSelected() {
+      return this.selectedId === this.node.id
+    }
+  },
+  methods: {
+    async expandNode(e) {
+      e.stopPropagation();
+      if (this.expanded) {
+        this.expanded = false
+        return
+      }
+      if (this.children.length === 0 && this.node.childs && this.node.childs.length > 0) {
+        this.loading = true
+        const { data } = await this.getNode(this.node.id, this.session)
+        this.children = data.children || []
+        this.children_points = data.children_points || [] // Guardar los puntos por hijo
+        this.loading = false
+      }
+      this.expanded = true
+    },
+    handleSelect(e) {
+      this.$emit('select', this.node)
+    }
+  },
+  render(h) {
+    return h('li', {
+      class: { 'selected-node': this.isSelected },
+      style: { marginBottom: '8px' }
+    }, [
+      h('span', {
+        on: { click: this.handleSelect },
+        style: {
+          display: 'inline-block',
+          background: this.isSelected ? '#e0f7fa' : '#f8f9fa',
+          border: this.isSelected ? '2px solid #00bcd4' : '1px solid #ccc',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          minWidth: '120px',
+          boxShadow: this.isSelected ? '0 0 8px #00bcd4' : 'none',
+          cursor: 'pointer',
+          position: 'relative',
+        }
+      }, [
+        (this.node.childs && this.node.childs.length > 0) ?
+          h('i', {
+            class: ['fas', this.expanded ? 'fa-minus-square' : 'fa-plus-square'],
+            style: { cursor: 'pointer', marginRight: '6px', color: '#00bcd4', fontSize: '18px', position: 'absolute', left: '-24px', top: '8px' },
+            on: { click: this.expandNode }
+          }) : null,
+        h('i', { class: ['fas', 'fa-user-tie', { act: this.node.activated, aff: this.node.affiliated }], style: { fontSize: '24px', marginRight: '6px' } }),
+        h('i', { class: ['fas', 'fa-gem', this.node.rank], style: { fontSize: '16px', marginRight: '4px' } }),
+        h('span', { style: { fontWeight: 'bold', color: '#333' } }, this.node.name),
+        h('br'),
+        h('span', { style: { color: '#888', fontSize: '12px' } }, `Puntos personales: ${this.node.points}`),
+        (this.node.total_points !== undefined) ? h('span', { style: { color: '#00bcd4', fontSize: '12px', marginLeft: '8px', fontWeight: 'bold' } }, `Total grupal: ${this.node.total_points}`) : null,
+      ]),
+      this.loading ? h('div', { style: { color: '#00bcd4', fontSize: '12px', marginTop: '4px' } }, [
+        h('i', { class: ['fas', 'fa-spinner', 'fa-spin'], style: { marginRight: '6px' } }), 'Cargando...']
+      ) : null,
+      // Mostrar el desglose de puntos por hijo debajo de los hijos expandidos
+      (this.expanded && this.children_points && this.children_points.length > 0) ?
+        h('div', { style: { margin: '8px 0 8px 24px', fontSize: '13px', color: '#00bcd4' } }, [
+          h('b', 'Puntos por cada hijo:'),
+          h('ul', { style: { margin: '4px 0 0 0', padding: 0, listStyle: 'none' } },
+            this.children_points.map((pts, idx) =>
+              h('li', { key: idx, style: { marginBottom: '2px' } }, `Hijo ${idx + 1}: ${pts}`)
+            )
+          )
+        ]) : null,
+      (this.expanded && this.children.length > 0)
+        ? h('ul', this.children.map(child => h(TreeNode, { props: { node: child, session: this.session, getNode: this.getNode, selectedId: this.selectedId }, on: { select: this.$listeners.select } })))
+        : null
+    ])
+  }
+}
+
 export default {
   components: {
     App,
+    TreeNode,
   },
   data() {
     return {
       loading: true,
       id:   null,
       node: null,
-      count: 0,
       selec_node: {},
       open: false,
+      count: 0,
+      selectedId: null,
+      children_points: [],
     }
   },
   computed: {
@@ -162,65 +200,36 @@ export default {
     },
   },
   async created() {
-    // GET data
-//     const { data } = await api.tree(this.session, null); console.log({ data })
+    await this.GET(null)
+  },
+  methods: {
+    async GET(id) {
+      this.loading = true
+      const { data } = await api.tree(this.session, id)
+      this.loading = false
 
-//     this.loading = false
+      if(data.error && data.msg == 'invalid session') this.$router.push('/login')
+      if(data.error && data.msg == 'unverified user') this.$router.push('/verify')
 
-//     // error
-//     if(data.error && data.msg == 'invalid session') this.$router.push('/login')
-//     if(data.error && data.msg == 'unverified user') this.$router.push('/verify')
-
-//     // success
-//     this.$store.commit('SET_NAME',       data.name)
-//     this.$store.commit('SET_LAST_NAME',  data.lastName)
-//     this.$store.commit('SET_AFFILIATED', data.affiliated)
-//     this.$store.commit('SET__ACTIVATED',  data._activated)
-//     this.$store.commit('SET_ACTIVATED',  data.activated)
-//     this.$store.commit('SET_PLAN',       data.plan)
-//     this.$store.commit('SET_COUNTRY',    data.country)
-//     this.$store.commit('SET_PHOTO',      data.photo)
-//     this.$store.commit('SET_TREE',       data.tree)
-
-//     this.id   = data.id
-//     // this.nodes = data.nodes
-//     this.node = data.node
-//     this.selec_node = data.node
-//   },
-//   methods: {
-//     click(node) {
-//       this.count += 1
-//       setTimeout(() => {
-//         if(this.count == 1) {
-//           console.log('click ...')
-//           this.selec_node = node
-//           this.open = true
-//         } else {
-//           console.log('double click ...')
-//           this.GET(node.id)
-//         }
-//         this.count = 0
-//       }, 300)
-//     },
-//     // async GET(id) {
-//     //   console.log('GET ... ', id)
-//     //   this.loading = true
-
-//     //   // GET data by id
-//     //   const { data } = await api.tree(this.session, id); console.log({ data })
-
-//     //   this.loading = false
-
-//     //   // success
-//     //   // this.nodes = data.nodes
-//     //   this.node = data.node
-//     // },
-
-//     closed() {
-//       console.log('closed ...')
-//       this.open = false
-//     },
-   }
+      this.id = data.node.id
+      this.node = data.node
+      this.selec_node = data.node
+      this.selectedId = data.node.id
+      this.children_points = data.children_points || []
+    },
+    // Método para cargar hijos de un nodo (usado por TreeNode)
+    async GET_NODE(id, session) {
+      return await api.tree(session, id)
+    },
+    click(node) {
+      this.selectedId = node.id
+      this.selec_node = node
+      this.open = true
+    },
+    closed() {
+      this.open = false
+    },
+  }
 };
 </script>
 
@@ -473,5 +482,13 @@ https://codepen.io/team/amcharts/pen/poPxojR */
   /*.highlighted:hover {
     background-color: var(--highlighted) !important;
   }*/
+</style>
+
+<style>
+.selected-node > span {
+  box-shadow: 0 0 8px #00bcd4 !important;
+  border: 2px solid #00bcd4 !important;
+  background: #e0f7fa !important;
+}
 </style>
 

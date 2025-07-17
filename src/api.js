@@ -44,8 +44,11 @@ class API {
   directs(session) {
     return axios.get (`/app/directs?session=${session}`)
   }
-  tree(session, id) {
-    return axios.get (`/app/tree?session=${session}&&id=${id}`)
+  tree(session, id, depth) {
+    let url = `/app/tree?session=${session}`
+    if (id !== undefined && id !== null) url += `&&id=${id}`
+    if (depth !== undefined && depth !== null) url += `&&depth=${depth}`
+    return axios.get(url)
   }
   transactions(session) {
     return axios.get (`/app/transactions?session=${session}`)
