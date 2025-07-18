@@ -58,25 +58,8 @@
               </div>
             </div>
           </div>
-          <br>
-          <p style="font-weight:bold;">Últimas compras:</p>
-          <table style="width:100%; font-size:13px;">
-            <thead>
-              <tr>
-                <th>Fecha</th><th>Monto</th><th>Puntos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="activation in (selec_node.last_activations || []).slice().reverse()">
-                <td>{{ activation.date | date }}</td>
-                <td>{{ activation.price }}</td>
-                <td>{{ activation.points }}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
-
     </div>
   </App>
 </template>
