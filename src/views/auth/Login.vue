@@ -28,7 +28,7 @@
           id="dni"
           class="input"
           style="border: solid 1px #9C5AD8; margin-left: 5px"
-          placeholder="Dni"
+          placeholder="Usuario"
           oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')"
           v-model="dni"
           :class="{ error: error.dni }"
@@ -111,7 +111,7 @@
           ></a>
           <a
             class="fab fa-whatsapp social-icon whatsapp"
-            :href="wsp"
+            :href="wsp_ec"
             target="_blank"
           ></a>
         </div>
@@ -169,6 +169,9 @@ export default {
     yt() {
       return this.$store.state.yt;
     },
+    wsp_ec(){
+      return this.$store.state.wsp_ec
+    }
   },
   filters: {
     alert(msg) {

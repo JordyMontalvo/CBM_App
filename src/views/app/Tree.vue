@@ -9,13 +9,20 @@
 
       <p style="font-weight:bold; font-size:18px; margin-bottom:10px;">Total de puntos grupal: {{ node.total_points }}</p>
 
-      <div v-if="children_points && children_points.length">
-        <p style="margin-bottom: 0; font-weight: bold;">Puntos por cada hijo:</p>
-        <ul style="margin-top: 0;">
-          <li v-for="(pts, idx) in children_points" :key="idx">
-            Hijo {{ idx + 1 }}: {{ pts }}
-          </li>
-        </ul>
+      <div v-if="children && children.length && children_points && children_points.length">
+        <p style="margin-bottom: 8px; font-weight: bold;">Puntos por cada hijo:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+          <div v-for="(child, idx) in children" :key="child.id"
+               style="background: #f0f7fa; border-radius: 12px; box-shadow: 0 2px 8px #00bcd420; padding: 12px 18px; min-width: 180px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-user-circle" style="font-size: 28px; color: #00bcd4;"></i>
+            <div style="flex:1;">
+              <div style="font-weight: bold; color: #333; font-size: 15px;">{{ child.name }}</div>
+              <div style="color: #888; font-size: 13px;">
+                Puntos grupales: <span style="color: #00bcd4; font-weight: bold;">{{ children_points[idx] }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="body">
@@ -39,6 +46,18 @@
           <p><b>Rango Cerrado:</b> {{ selec_node._rank | _rank }}</p>
           <p><b>Puntos personales:</b> {{ selec_node.points }}</p>
           <p><b>Puntos grupales:</b> {{ selec_node.total_points !== undefined ? selec_node.total_points : '—' }}</p>
+          <div v-if="modal_children && modal_children.length && modal_children_points && modal_children_points.length">
+            <p style="font-weight:bold; margin-bottom: 8px;">Puntos por cada hijo directo:</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+              <div v-for="(child, idx) in modal_children" :key="child.id" style="background: #f0f7fa; border-radius: 12px; box-shadow: 0 2px 8px #00bcd420; padding: 12px 18px; min-width: 180px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-circle" style="font-size: 28px; color: #00bcd4;"></i>
+                <div style="flex:1;">
+                  <div style="font-weight: bold; color: #333; font-size: 15px;">{{ child.name }}</div>
+                  <div style="color: #888; font-size: 13px;">Puntos grupales: <span style="color: #00bcd4; font-weight: bold;">{{ modal_children_points[idx] }}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <br>
           <p style="font-weight:bold;">Últimas compras:</p>
           <table style="width:100%; font-size:13px;">
@@ -141,10 +160,10 @@ const TreeNode = {
       // Mostrar el desglose de puntos por hijo debajo de los hijos expandidos
       (this.expanded && this.children_points && this.children_points.length > 0) ?
         h('div', { style: { margin: '8px 0 8px 24px', fontSize: '13px', color: '#00bcd4' } }, [
-          h('b', 'Puntos por cada hijo:'),
+          h(),
           h('ul', { style: { margin: '4px 0 0 0', padding: 0, listStyle: 'none' } },
             this.children_points.map((pts, idx) =>
-              h('li', { key: idx, style: { marginBottom: '2px' } }, `Hijo ${idx + 1}: ${pts}`)
+              h()
             )
           )
         ]) : null,
@@ -169,7 +188,10 @@ export default {
       open: false,
       count: 0,
       selectedId: null,
+      children: [], // <-- Añadido para guardar los hijos completos
       children_points: [],
+      modal_children: [], // Para hijos del usuario seleccionado en el modal
+      modal_children_points: [], // Para puntos de los hijos del usuario seleccionado
     }
   },
   computed: {
@@ -215,16 +237,22 @@ export default {
       this.node = data.node
       this.selec_node = data.node
       this.selectedId = data.node.id
+      this.children = data.children || [] // <-- Guardar hijos completos
       this.children_points = data.children_points || []
     },
     // Método para cargar hijos de un nodo (usado por TreeNode)
     async GET_NODE(id, session) {
       return await api.tree(session, id)
     },
-    click(node) {
+    async click(node) {
       this.selectedId = node.id
       this.selec_node = node
       this.open = true
+
+      // Obtener hijos y puntos del usuario seleccionado
+      const { data } = await this.GET_NODE(node.id, this.session)
+      this.modal_children = data.children || []
+      this.modal_children_points = data.children_points || []
     },
     closed() {
       this.open = false

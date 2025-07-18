@@ -19,11 +19,11 @@ export default new Vuex.Store({
 
     fb:   'https://web.facebook.com/profile.php?id=100094158219946',
     is:   'https://www.instagram.com/cbmecuadoroficial/',
-    tk:   '',
-    yt:   '',
+    tk:   'https://www.tiktok.com/@cbmundialoficial?_t=ZM-8y72C6T6M7S&_r=1',
+    yt:   'https://youtube.com/@companiabrillantemundial?si=pd2gwboCXaa0Ma6E',
     wsp_pe: '',
     wsp_bo: '',
-    wsp_ec: 'https://wa.link/5wq8rn',
+    wsp_ec: 'https://wa.link/7yiaav',
     site: '',
 
     open: false,
