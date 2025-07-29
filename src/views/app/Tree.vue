@@ -45,6 +45,7 @@
           <p><b>Correo:</b> {{ selec_node.email }}</p>
           <p><b>Rango Cerrado:</b> {{ selec_node._rank | _rank }}</p>
           <p><b>Puntos personales:</b> {{ selec_node.points }}</p>
+          <p><b>Puntos de afiliación:</b> {{ selec_node.affiliation_points || 0 }}</p>
           <p><b>Puntos grupales:</b> {{ selec_node.total_points !== undefined ? selec_node.total_points : '—' }}</p>
           <div v-if="modal_children && modal_children.length && modal_children_points && modal_children_points.length">
             <p style="font-weight:bold; margin-bottom: 8px;">Puntos por cada hijo directo:</p>
@@ -135,6 +136,7 @@ const TreeNode = {
         h('span', { style: { fontWeight: 'bold', color: '#333' } }, this.node.name),
         h('br'),
         h('span', { style: { color: '#888', fontSize: '12px' } }, `Puntos personales: ${this.node.points}`),
+        (this.node.affiliation_points && this.node.affiliation_points > 0) ? h('span', { style: { color: '#ff9800', fontSize: '12px', marginLeft: '8px' } }, `Afiliación: ${this.node.affiliation_points}`) : null,
         (this.node.total_points !== undefined) ? h('span', { style: { color: '#00bcd4', fontSize: '12px', marginLeft: '8px', fontWeight: 'bold' } }, `Total grupal: ${this.node.total_points}`) : null,
       ]),
       this.loading ? h('div', { style: { color: '#00bcd4', fontSize: '12px', marginTop: '4px' } }, [
