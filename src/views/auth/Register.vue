@@ -7,10 +7,10 @@
             font-size: 30px;
             font-style: roboto;
             color: rgba(137, 136, 141, 1);
-            margin-bottom: 35px;
+            margin-bottom: 10px;
           "
         >
-          Bienvenido
+          REGÍSTRATE
         </h1>
       <div class="input-container">
         <i class="icon fa fa-flag"></i>
