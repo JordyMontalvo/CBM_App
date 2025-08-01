@@ -1,68 +1,90 @@
 <template>
   <Auth>
-    <section>
+    <section style="text-align: center;">
       <br>
+      <h1
+          style="
+            font-size: 30px;
+            font-style: roboto;
+            color: rgba(137, 136, 141, 1);
+            margin-bottom: 35px;
+          "
+        >
+          Bienvenido
+        </h1>
+      <div class="input-container">
+        <i class="icon fa fa-flag"></i>
+        <select class="input" v-model="country"
+          :class="{'error': error.country}"
+          @change="reset('country')">
+          <option value="null" disabled>País</option>
+          <option value="Ecuador"   >🇪🇨 Ecuador</option>
+          <option value="Perú"      >🇵🇪 Perú</option>
+          <option value="Argentina" >🇦🇷 Argentina</option>
+          <option value="Bolivia"   >🇧🇴 Bolivia</option>
+          <option value="Colombia"  >🇨🇴 Colombia</option>
+          <option value="Costa Rica">🇨🇷 Costa Rica</option>
+          <option value="Chile"     >🇨🇱 Chile</option>
+        </select>
+      </div> <br>
 
-      <i class="icon fa fa-flag"></i>
-      <select class="input" v-model="country"
-        :class="{'error': error.country}"
-        @change="reset('country')">
-        <option value="null" disabled>País</option>
-        <option value="Ecuador"   >🇪🇨 Ecuador</option>
-        <option value="Perú"      >🇵🇪 Perú</option>
-        <option value="Argentina" >🇦🇷 Argentina</option>
-        <option value="Bolivia"   >🇧🇴 Bolivia</option>
-        <option value="Colombia"  >🇨🇴 Colombia</option>
-        <option value="Costa Rica">🇨🇷 Costa Rica</option>
-        <option value="Chile"     >🇨🇱 Chile</option>
-      </select> <br>
+      <div class="input-container">
+        <i class="icon fa fa-id-card"></i>
+        <input class="input" placeholder="Documento de identidad"
+        oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')"
+        v-model="dni"
+        :class="{'error': error.dni}"
+        @keydown="reset('dni')">
+      </div> <br>
 
-      <i class="icon fa fa-id-card"></i>
-      <input class="input" placeholder="Documento de identidad"
-      oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')"
-      v-model="dni"
-      :class="{'error': error.dni}"
-      @keydown="reset('dni')"> <br>
+      <div class="input-container">
+        <i class="icon fa-solid fa-user-tie"></i>
+        <input class="input" placeholder="Nombre"
+        v-model="name"
+        :class="{'error': error.name}"
+        @keydown="reset('name')"
+        :disabled="country == 'Perú' && !younger">
+      </div> <br>
 
-      <i class="icon fa-solid fa-user-tie"></i>
-      <input class="input" placeholder="Nombre"
-      v-model="name"
-      :class="{'error': error.name}"
-      @keydown="reset('name')"
-      :disabled="country == 'Perú' && !younger"> <br>
+      <div class="input-container">
+        <i class="icon fa-solid fa-user-tie"></i>
+        <input class="input" placeholder="Apellidos"
+        v-model="lastName"
+        :class="{'error': error.lastName}"
+        @keydown="reset('lastName')"
+        :disabled="country == 'Perú' && !younger">
+      </div> <br>
 
-      <i class="icon fa-solid fa-user-tie"></i>
-      <input class="input" placeholder="Apellidos"
-      v-model="lastName"
-      :class="{'error': error.lastName}"
-      @keydown="reset('lastName')"
-      :disabled="country == 'Perú' && !younger"> <br>
-
-      <i class="icon fa fa-calendar"></i>
+      <!-- <i class="icon fa fa-calendar"></i>
       <input type="date" class="input" placeholder="Fecha de Nacimiento"
-      v-model="date"> <br>
+      v-model="date"> <br> -->
 
-      <i class="icon fa-solid fa-mobile-retro" v-if="!country"></i>
-      <small v-if="country" style="min-width: 25px; margin-right: 8px; display: inline-block;">{{ prefix }}</small>
-      <input class="input" placeholder="Celular" maxlength="12"
-      v-model="phone"> <br>
-
+      <div class="input-container">
+        <i class="icon fa-solid fa-mobile-retro" v-if="!country"></i>
+        <small v-if="country" style="display:flex">{{ prefix }}</small>
+        <input class="input" placeholder="Celular" maxlength="12"
+        v-model="phone">
+      </div> <br>
+<!-- 
       <i class="icon fa-solid fa-envelope-open"></i>
       <input class="input" placeholder="Correo"
-      v-model.trim="email"> <br>
+      v-model.trim="email"> <br> -->
 
-      <i class="icon fa-solid fa-key"></i>
-      <input :type="show ? 'text' : 'password'" class="input pass" placeholder="Contraseña"
-      v-model="password"
-      :class="{'error': error.password}"
-      @keydown="reset('password')">
-      <i class="show far fa-eye" @click="show = !show"></i> <br>
+      <div class="input-container">
+        <input :type="show ? 'text' : 'password'" class="input pass" placeholder="Contraseña"
+        v-model="password"
+        :class="{'error': error.password}"
+        @keydown="reset('password')">
+        <i class="show far fa-eye" @click="show = !show"></i>
+      </div> <br>
 
-      <i class="icon fa-solid fa-paper-plane"></i>
-      <input class="input" placeholder="Código de patrocinador" :disabled="disabled"
-      v-model="code"
-      :class="{'error': error.code}"
-      @keydown="reset('code')"> <br><br>
+      <div class="input-container">
+        <i class="icon fa-solid fa-paper-plane"></i>
+        <input class="input" placeholder="Código de patrocinador" :disabled="disabled"
+        v-model="code"
+        :class="{'error': error.code}"
+        @keydown="reset('code')">
+      </div> <br><br>
 
       <p class="alert">{{ alert | alert }}</p>
 
@@ -70,26 +92,35 @@
       <small><input type="checkbox" v-model="check">Acepto los <a href="" target="_blank" style="color: #351251;font-weight: 600;">términos de uso</a></small> <br>
 
 
-      <button class="button" v-show="!sending" @click="submit">Registrarme</button>
-      <button class="button" v-show= "sending" disabled>Creando cuenta ...</button> <br><br>
-
+      <button class="login-button" v-show="!sending" @click="submit">Registrarme</button>
+      <button class="login-button" v-show= "sending" disabled>Creando cuenta ...</button> <br>
     </section>
     <footer>
-      <router-link to="/welcome" class="route">Regresar</router-link>
-      <br>
+      
+      <!-- <router-link to="/welcome" class="route">Regresar</router-link> -->
       <header>
         <div class="social">
           <!-- <a class="fab fa-facebook-square" :href="fb" target="_blank"></a>
           <a class="fab fa-instagram"       :href="is" target="_blank"></a>
           <a class="fab fa-tiktok"          :href="tk" target="_blank"></a>
           <a class="fab fa-youtube"         :href="yt" target="_blank"></a> -->
-          <a class="fab fa-facebook-square" :href="fb" target="_blank"></a>
-          <a class="fab fa-instagram"       :href="is" target="_blank"></a>
-          <a class="fab fa-tiktok"          target="_blank"></a>
-          <a class="fab fa-youtube"         target="_blank"></a>
+          <a class="fab fa-facebook-square social-icon facebook" :href="fb" target="_blank"></a>
+          <a
+            class="fab fa-whatsapp social-icon whatsapp"
+            :href="wsp_ec"
+            target="_blank"
+          ></a>
+          <!-- <a class="fab fa-instagram"       :href="is" target="_blank"></a> -->
+          <a class="fab fa-tiktok social-icon tiktok"          target="_blank"></a>
+          <a class="fab fa-youtube social-icon youtube"         target="_blank"></a>
         </div>
       </header>
     </footer>
+    <small style="color: rgba(137, 136, 141, 1); margin-left: 60px;"
+        >¿Olvidaste tu contraseña?
+        <router-link to="/remember" style="color: #43078C"
+          >Ingresa Aquí</router-link
+        ></small>
   </Auth>
 </template>
 
@@ -247,3 +278,78 @@ export default {
   },
 };
 </script>
+<style>
+.input-container {
+  position: relative;
+  display: inline-block;
+  width: 330px;
+}
+
+.input-container .icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: #43078C;
+  font-size: 16px;
+  margin-right: 0;
+}
+
+.input-container .input {
+  padding-right: 50px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.social-icon {
+  margin-right: 10px;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 24px;
+  transition: box-shadow 0.2s, background 0.2s;
+  background: #9C5AD8;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .social-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    line-height: 32px;
+    font-size: 18px;
+    margin-right: 6px;
+  }
+}
+.social-icon:hover {
+  box-shadow: 0 2px 8px rgba(67, 7, 140, 0.15);
+  background: #f3eaff;
+  color: #9C5AD8;
+}
+.login-button {
+  border-radius: 29px;
+  width: 345px;
+  height: 50px;
+  background: #43078C;
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  transition: background 0.3s ease;
+  margin-left: 13px;
+  transition: all 0.3s ease;
+  margin-top: 20px;/* Transición suave para el hover */
+}
+</style>

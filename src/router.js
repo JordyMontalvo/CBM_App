@@ -2,7 +2,7 @@ import Vue    from 'vue'
 import Router from 'vue-router'
 
 // Auth
-import Welcome  from './views/auth/Welcome.vue'
+// import Welcome  from './views/auth/Welcome.vue'
 import Login    from './views/auth/Login.vue'
 import Register from './views/auth/Register.vue'
 import Remember from './views/auth/Remember.vue'
@@ -38,14 +38,14 @@ const routes = [
   // all
   {
     path: '*',
-    redirect: '/welcome'
+    redirect: '/login'
   },
   // Auth
-  {
-    path: '/welcome',
-    component: Welcome,
-    meta: { requiresNoAuth: true }
-  },
+  // {
+  //   path: '/welcome',
+  //   component: Welcome,
+  //   meta: { requiresNoAuth: true }
+  // },
   {
     path: '/login/:id?',
     component: Login,

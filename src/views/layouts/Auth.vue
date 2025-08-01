@@ -1,5 +1,15 @@
 <template>
   <div class="login-container">
+    <!-- Navigation Tabs at the top -->
+    <div class="nav-tabs">
+      <router-link to="/login" class="nav-tab" :class="{ active: $route.path === '/login' }">
+        INICIO
+      </router-link>
+      <router-link to="/register" class="nav-tab" :class="{ active: $route.path === '/register' }">
+        REGISTRO
+      </router-link>
+    </div>
+    
     <div class="login-left">
       <div class="overlay"></div>
       <div class="login-left-content">
@@ -30,11 +40,47 @@ export default {
 </script>
 
 <style scoped>
+.nav-tabs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  z-index: 10;
+  width: 10%;
+  margin-left: 250px;
+}
+
+.nav-tab {
+  flex: 1;
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  border: none;
+  text-align: center;
+  border-radius: 0;
+}
+
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.nav-tab.active {
+  background: #ffd600;
+  color: black;
+}
+
+
 .logo-login {
   width: 300px;
   display: flex;
   flex-direction:column-reverse;
   margin-left: -55px;
+  filter: hue-rotate(240deg) saturate(1.5) brightness(0.8); /* Cambia el color a morado */
 }
 .login-container {
   display: flex;
@@ -55,6 +101,14 @@ export default {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: url('../../assets/img/back.jpg') center center/cover no-repeat;
+  z-index: 1;
+}
+
+.login-left .overlay::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(67, 7, 140, 0.5); /* Overlay morado #43078C */
   z-index: 1;
 }
 .login-left-content {
@@ -95,6 +149,16 @@ body {
     flex-direction: column;
     height: auto;
   }
+  .nav-tabs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .nav-tab {
+    padding: 15px 20px;
+    font-size: 16px;
+  }
   .login-left, .login-right {
     width: 100%;
     min-height: 220px;
@@ -117,6 +181,11 @@ body {
   .login-right {
     min-height: 400px;
     padding: 20px 0;
+  }
+}
+@media (max-width: 900px) {
+  .nav-tabs {
+    display:none;
   }
 }
 </style>
