@@ -380,10 +380,16 @@ export default {
   }
   
   .tab-login {
-    font-size: 16px;
-    padding: 12px 25px;
-    margin: 0 10px;
-  }
+  font-size: 15px;
+  color: rgba(137, 136, 141, 1);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-bottom: solid 2px rgba(137, 136, 141, 1);
+  transition: all 0.3s ease;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  transition: all 0.3s ease;
+}
   
   .tab-login.active {
     color: #43078C;
@@ -410,20 +416,16 @@ export default {
   margin-top: 20px;/* Transición suave para el hover */
 }
 .tab-login {
-  font-size: 15px;
-  color: rgba(137, 136, 141, 1);
-  text-decoration: none;
-  padding: 10px 20px;
-  border-bottom: solid 2px rgba(137, 136, 141, 1);
-  transition: all 0.3s ease;
-}
-
-.tab-login.active {
-  color: #4b2e12; /* marrón oscuro */
-  border-bottom: solid 2px #ffb57a; /* naranja claro */
-  font-weight: bold;
-  transition: all 0.1s ease;
-}
+    font-size: 16px;
+    padding: 12px 25px;
+    margin: 0 10px;
+  }
+  
+  .tab-login.active {
+    color: #43078C;
+    border-bottom: 3px solid #ffd600;
+    font-weight: bold;
+  }
 @media (min-width: 900px) {
   .tab-login {
     display: none;
