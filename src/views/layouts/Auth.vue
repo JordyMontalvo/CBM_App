@@ -14,8 +14,9 @@
       <div class="overlay"></div>
       <div class="login-left-content">
         <img src="@/assets/img/logo-CBM-2.png" class="logo-login" />
-        <h1>Hola <br>Mundo.</h1>
-        <h2>Compañía Brillante Mundial</h2>
+        <h3 class="welcome-text">{{ $route.path === '/register' ? 'REGISTRATE' : 'BIENVENIDO' }}</h3>
+        <h1 class="desktop-text">Hola <br>Mundo.</h1>
+        <h2 class="desktop-text">Compañía Brillante Mundial</h2>
       </div>
     </div>
     <div class="login-right">
@@ -133,6 +134,18 @@ export default {
   font-size: 1.5em;
   margin-top: 10px;
 }
+
+.welcome-text {
+  display: none;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0 0 0;
+  text-align: center;
+}
+
+.desktop-text {
+  display: block;
+}
 .login-right {
   width:55%;
   display: flex;
@@ -170,13 +183,23 @@ body {
   .login-left-content {
     text-align: center;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .logo-login {
     width: 180px;
     margin-left: 0;
   }
-  .login-left h1 {
-    font-size: 2.5em;
+  .welcome-text {
+    font-size: 1.5em;
+    display: block;
+    font-size: 1.5em;
+    margin: -15px 0 0 0;
+  }
+  .desktop-text {
+    display: none;
   }
   .login-right {
     min-height: 400px;

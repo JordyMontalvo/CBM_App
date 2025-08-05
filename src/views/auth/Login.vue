@@ -1,6 +1,23 @@
 <template>
   <Auth style="text-align: center;"> 
     <section >
+
+            <div style="display: flex; justify-content: center">
+        <router-link
+          to="/login"
+          class="tab-login"
+          :class="{ active: $route.path === '/login' }"
+        >
+          INICIO
+        </router-link>
+        <router-link
+          to="/register"
+          class="tab-login"
+          :class="{ active: $route.path === '/register' }"
+        >
+          REGISTRO
+        </router-link>
+      </div>
       <div class="logos">
         <h1
           style="
@@ -401,27 +418,70 @@ export default {
   margin-right: 260px;
 }
 
-@media (max-width: 1260px) {
+@media (max-width: 900px) {
   .logos {
     display: none;
   }
 }
-@media (min-width: 1260px) {
+@media (min-width: 900px) {
   .tab-login {
     display: none;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .login-button {
     width: 90vw;
     min-width: 180px;
     max-width: 320px;
     margin-left: 0;
+    border-radius: 25px;
+    height: 45px;
+    font-size: 16px;
   }
   .google-login-btn {
     width: 90vw;
     min-width: 180px;
     max-width: 320px;
+  }
+  
+  .input {
+    width: 90vw;
+    max-width: 320px;
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid #9C5AD8;
+    padding: 0 15px;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .label-login, .label-login-2 {
+    text-align: left;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #43078C;
+  }
+  
+  .tab-login {
+    font-size: 16px;
+    padding: 12px 25px;
+    margin: 0 10px;
+  }
+  
+  .tab-login.active {
+    color: #43078C;
+    border-bottom: 3px solid #ffd600;
+    font-weight: bold;
+  }
+  
+  .social-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    line-height: 35px;
+    font-size: 20px;
+    margin: 0 5px;
   }
 }
 @media (max-width: 1260px) {

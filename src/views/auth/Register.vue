@@ -1,6 +1,22 @@
 <template>
   <Auth>
     <section style="text-align: center;">
+      <div style="display: flex; justify-content: center">
+        <router-link
+          to="/login"
+          class="tab-login"
+          :class="{ active: $route.path === '/login' }"
+        >
+          INICIO
+        </router-link>
+        <router-link
+          to="/register"
+          class="tab-login"
+          :class="{ active: $route.path === '/register' }"
+        >
+          REGISTRO
+        </router-link>
+      </div>     
       <br>
       <h1
           style="
@@ -324,14 +340,55 @@ export default {
   color: #fff;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .social-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
-    line-height: 32px;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    line-height: 35px;
+    font-size: 20px;
+    margin: 0 5px;
+  }
+  
+  .input-container {
+    width: 90vw;
+    max-width: 320px;
+  }
+  
+  .input-container .input {
+    width: 100%;
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid #9C5AD8;
+    padding: 0 15px;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .input-container .icon {
+    right: 12px;
     font-size: 18px;
-    margin-right: 6px;
+  }
+  
+  .login-button {
+    width: 90vw;
+    max-width: 320px;
+    margin-left: 0;
+    border-radius: 25px;
+    height: 45px;
+    font-size: 16px;
+  }
+  
+  .tab-login {
+    font-size: 16px;
+    padding: 12px 25px;
+    margin: 0 10px;
+  }
+  
+  .tab-login.active {
+    color: #43078C;
+    border-bottom: 3px solid #ffd600;
+    font-weight: bold;
   }
 }
 .social-icon:hover {
@@ -351,5 +408,20 @@ export default {
   margin-left: 13px;
   transition: all 0.3s ease;
   margin-top: 20px;/* Transición suave para el hover */
+}
+.tab-login {
+  font-size: 15px;
+  color: rgba(137, 136, 141, 1);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-bottom: solid 2px rgba(137, 136, 141, 1);
+  transition: all 0.3s ease;
+}
+
+.tab-login.active {
+  color: #4b2e12; /* marrón oscuro */
+  border-bottom: solid 2px #ffb57a; /* naranja claro */
+  font-weight: bold;
+  transition: all 0.1s ease;
 }
 </style>
