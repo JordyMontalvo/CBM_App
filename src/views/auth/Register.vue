@@ -424,4 +424,9 @@ export default {
   font-weight: bold;
   transition: all 0.1s ease;
 }
+@media (min-width: 900px) {
+  .tab-login {
+    display: none;
+  }
+}
 </style>

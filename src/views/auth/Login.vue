@@ -493,7 +493,7 @@ export default {
 @media (max-width: 1260px) {
   .label-login-2 {
     margin-right: 235px;
-    margin-top: 0px;
+    margin-top: 25px;
   }
 }
 </style>
