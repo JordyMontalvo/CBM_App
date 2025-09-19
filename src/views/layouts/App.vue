@@ -42,7 +42,7 @@
           <a class="fab fa-youtube"         :href="yt" target="_blank" style="font-size: 18px;color: #ff0050;"></a>
         </div>
 
-        <router-link to="/activacion" @click.native="close" v-if="office_id == null">
+        <router-link to="/dashboard" @click.native="close" v-if="office_id == null">
           <i class="fas fa-home"></i> INICIO
         </router-link>
         <!-- <router-link to="/status" @click.native="close">
