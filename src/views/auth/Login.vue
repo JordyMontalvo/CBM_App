@@ -259,7 +259,7 @@ export default {
           return;
         }
         this.$store.commit("SET_SESSION", data.session);
-        this.$router.push("/dashboard");
+        this.$router.push("/activation");
       } catch (e) {
         alert("Error al iniciar sesión con Google");
       }
@@ -296,7 +296,7 @@ export default {
 
       // routing
       if (office_id) this.$router.push(`/${this.path}`);
-      else this.$router.push("/dashboard");
+      else this.$router.push("/activation");
     },
     reset(name) {
       this.alert = null;

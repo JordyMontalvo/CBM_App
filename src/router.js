@@ -189,7 +189,7 @@ router.beforeEach((to, from, next) => {
   const path      = localStorage.getItem('path')
   // console.log({ session, office })
 
-  if (requiresNoAuth &&  session && !office_id) { next({ path: '/dashboard' }) }
+  if (requiresNoAuth &&  session && !office_id) { next({ path: '/activation' }) }
   if (requiresNoAuth &&  session &&  office_id) { next({ path: `/${path}`   }) }
 
   if (requiresAuth   && !session) { next({ path: '/login' }) }
