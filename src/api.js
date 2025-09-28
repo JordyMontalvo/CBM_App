@@ -155,6 +155,11 @@ class Transfers {
   GET(session) {
     return axios.get (`/app/transfers?session=${session}`)
   }
+  treeComplete(session, id) {
+    let url = `/app/tree-complete?session=${session}`
+    if (id !== undefined && id !== null) url += `&&id=${id}`
+    return axios.get(url)
+  }
 }
 
 export default new API({ Profile, Password, Security, Afiliation, Activation, Promo, Activations, Collect, Closeds, Transfer, Collects, Transfers })
