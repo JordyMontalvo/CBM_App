@@ -667,7 +667,6 @@ const TreeNode = {
         h('br'),
         h('span', { style: { color: '#888', fontSize: '12px' } }, `Puntos personales: ${this.node.points}`),
         (this.node.affiliation_points && this.node.affiliation_points > 0) ? h('span', { style: { color: '#ff9800', fontSize: '12px', marginLeft: '8px' } }, `Afiliación: ${this.node.affiliation_points}`) : null,
-        (this.node.total_points !== undefined) ? h('span', { style: { color: '#00bcd4', fontSize: '12px', marginLeft: '8px', fontWeight: 'bold' } }, `Total grupal: ${this.node.total_points}`) : null,
       ]),
       this.loading ? h('div', { style: { color: '#00bcd4', fontSize: '12px', marginTop: '4px' } }, [
         h('i', { class: ['fas', 'fa-spinner', 'fa-spin'], style: { marginRight: '6px' } }), 'Cargando...']
@@ -675,10 +674,10 @@ const TreeNode = {
       // Mostrar el desglose de puntos por hijo debajo de los hijos expandidos
       (this.expanded && this.children_points && this.children_points.length > 0) ?
         h('div', { style: { margin: '8px 0 8px 24px', fontSize: '13px', color: '#00bcd4' } }, [
-          h(),
+          h('div', { style: { fontWeight: 'bold', marginBottom: '4px' } }, 'Total grupal por hijo:'),
           h('ul', { style: { margin: '4px 0 0 0', padding: 0, listStyle: 'none' } },
             this.children_points.map((pts, idx) =>
-              h()
+              h('li', { key: idx, style: { marginBottom: '2px' } }, `${this.children[idx].name}: ${pts}`)
             )
           )
         ]) : null,
