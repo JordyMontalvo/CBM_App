@@ -356,7 +356,7 @@ justify-content: center; */
 .mode-title {
 text-align: center;
 margin-bottom: 40px;
-color: #9F00AD;
+color: #333;
 font-size: 32px;
 font-weight: bold;
 letter-spacing: 1px;
@@ -438,7 +438,7 @@ margin-bottom: 50px;
 }
 
 .mode-selector .card {
-background: rgb(210 9 182 / 12%);
+background: #fff;
 border: none;
 border-radius: 10px;
 padding: 20px;
@@ -554,27 +554,27 @@ font-size: 14px;
 }
 
 .btn-green {
-background: #d209b6;
+background: #9F00AD;
 color: white;
 }
 
 .btn-green:hover {
-background: #d209b6;
+background: #9F00AD;
 transform: translateY(-2px);
-box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+box-shadow: 0 4px 12px rgba(167, 40, 150, 0.123);
 }
 
 .btn-orange {
-background: #d209b6;
+background: #43078C;
 color: white;
 font-size: 16px;
 padding: 14px 28px;
 }
 
 .btn-orange:hover {
-background: #d209b6;
+background: #43078C;
 transform: translateY(-2px);
-box-shadow: 0 4px 12px rgba(230, 126, 0, 0.3);
+box-shadow: 0 4px 12px rgba(127, 0, 230, 0.137);
 }
 
 /* https://codepen.io/ea-ger/pen/rNJjxYr
