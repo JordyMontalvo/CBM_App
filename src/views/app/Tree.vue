@@ -203,7 +203,7 @@
                       </div>
                       <div class="point-details">
                         <span class="point-label">Puntos Grupales</span>
-                        <span class="point-value">{{ selec_node.total_points !== undefined ? selec_node.total_points : '—' }}</span>
+                        <span class="point-value">{{ totalPoints }}</span>
                       </div>
                     </div>
                   </div>
@@ -726,13 +726,9 @@ export default {
     activated() { return this.$store.state.activated },
     affiliated() { return this.$store.state.affiliated },
          totalPoints() {
-       // Si estamos en la vista de frontales, usar los puntos grupales del usuario seleccionado
-       if (this.selectedMode === 'frontales' && this.selec_node.total_points !== undefined) {
-         return this.selec_node.total_points;
-       }
-       // Para otros casos, calcular la suma de puntos personales + puntos de hijos
+       // Puntos grupales = suma de puntos de todos los hijos (sin incluir puntos propios)
        const childrenPointsTotal = this.modal_children_points.reduce((total, points) => total + points, 0);
-       return childrenPointsTotal + (this.selec_node.points || 0);
+       return childrenPointsTotal;
      },
   },
 
