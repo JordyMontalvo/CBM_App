@@ -61,7 +61,7 @@
         </div>
       </div>
 
-      <div class="box green" v-if="node">
+      <div class="box green" v-if="node && node.next_rank">
         <i class="fa fa-tachometer"></i>
         <div>
           <p>{{ node.next_rank.name | _rank }}</p>
@@ -148,16 +148,16 @@ export default {
     this.$store.commit('SET_PHOTO',      data.photo)
     this.$store.commit('SET_TREE',       data.tree)
 
-    this.banner   = data.banner
-    this.ins      = data.ins
-    this.insVirtual = data.insVirtual
-    this.outs     = data.outs.toFixed(2)
-    this.balance  = data.balance.toFixed(2)
-    this._balance = data._balance.toFixed(2)
-    this.team     = data.team
-    this.rank     = data.rank
-    this.points   = data.points
-    this.node     = data.node
+    this.banner      = data.banner
+    this.ins         = Number((data.ins == null ? 0 : data.ins))
+    this.insVirtual  = Number((data.insVirtual == null ? 0 : data.insVirtual))
+    this.outs        = Number((data.outs == null ? 0 : data.outs)).toFixed(2)
+    this.balance     = Number((data.balance == null ? 0 : data.balance)).toFixed(2)
+    this._balance    = Number((data._balance == null ? 0 : data._balance)).toFixed(2)
+    this.team        = data.team
+    this.rank        = data.rank
+    this.points      = Number((data.points == null ? 0 : data.points))
+    this.node        = data.node
     this.n_affiliates = data.n_affiliates
 
     const time = 4000
