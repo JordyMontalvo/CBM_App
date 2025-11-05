@@ -81,10 +81,14 @@
         <input class="input" placeholder="Celular" maxlength="12"
         v-model="phone">
       </div> <br>
-<!-- 
-      <i class="icon fa-solid fa-envelope-open"></i>
-      <input class="input" placeholder="Correo"
-      v-model.trim="email"> <br> -->
+
+      <div class="input-container">
+        <i class="icon fa-solid fa-envelope-open"></i>
+        <input type="email" class="input" placeholder="Correo electrónico"
+        v-model.trim="email"
+        :class="{'error': error.email}"
+        @keydown="reset('email')">
+      </div> <br>
 
       <div class="input-container">
         <input :type="show ? 'text' : 'password'" class="input pass" placeholder="Contraseña"
@@ -187,6 +191,8 @@ export default {
       // if (msg == 'username already use') return 'El usuario ya existe'
       if (msg == 'dni already use') return 'El documento ya existe'
       if (msg == 'code not found')  return 'El código de invitación no existe'
+      if (msg == 'email already use') return 'El correo electrónico ya está registrado'
+      if (msg == 'invalid email') return 'El formato del correo electrónico no es válido'
     },
   },
   computed: {
@@ -247,7 +253,10 @@ export default {
       if(!name)     { return this.error.name     = true }
       if(!lastName) { return this.error.lastName = true }
       // if(!username) { return this.error.username = true }
-      // if(!email)    { return this.error.email    = true }
+      if(!email)    { return this.error.email    = true }
+      // Validar formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if(email && !emailRegex.test(email)) { return this.error.email = true }
       if(!password) { return this.error.password = true }
       // if(!phone)    { return this.error.phone    = true }
       if(!code)     { return this.error.code     = true }
@@ -287,7 +296,7 @@ export default {
       if(name == 'name')     this.error.name     = false
       if(name == 'lastName') this.error.lastName = false
       // if(name == 'username') this.error.username = false
-      // if(name == 'email')    this.error.email    = false
+      if(name == 'email')    this.error.email    = false
       if(name == 'password') this.error.password = false
       if(name == 'code')     this.error.code     = false
     },
