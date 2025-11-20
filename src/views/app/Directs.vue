@@ -117,7 +117,12 @@
               <td>
                 <span class="score-cell">
                   {{ formatPoints(frontal.points) }}
-                  <i class="fab fa-whatsapp whatsapp-icon"></i>
+                  <i 
+                    class="fab fa-whatsapp whatsapp-icon" 
+                    @click="openWhatsApp(frontal.phone, frontal.country)"
+                    :class="{ 'disabled': !frontal.phone || frontal.phone === '-' }"
+                    :title="frontal.phone && frontal.phone !== '-' ? 'Abrir WhatsApp' : 'Sin número de teléfono'"
+                  ></i>
                 </span>
               </td>
             </tr>
@@ -161,7 +166,12 @@
               <td>
                 <span class="score-cell">
                   {{ formatPoints(direct.points) }}
-                  <i class="fab fa-whatsapp whatsapp-icon"></i>
+                  <i 
+                    class="fab fa-whatsapp whatsapp-icon" 
+                    @click="openWhatsApp(direct.phone, direct.country)"
+                    :class="{ 'disabled': !direct.phone || direct.phone === '-' }"
+                    :title="direct.phone && direct.phone !== '-' ? 'Abrir WhatsApp' : 'Sin número de teléfono'"
+                  ></i>
                 </span>
               </td>
             </tr>
@@ -361,6 +371,47 @@ export default {
       }
       const pts = Number(points) || 0;
       return String(pts).padStart(6, '0');
+    },
+    
+    openWhatsApp(phone, country) {
+      // Validar que haya un número de teléfono
+      if (!phone || phone === '-' || phone.trim() === '') {
+        alert('Este usuario no tiene número de teléfono registrado');
+        return;
+      }
+      
+      // Limpiar el número (eliminar espacios, guiones, paréntesis, etc.)
+      let cleanPhone = phone.toString().replace(/\s+/g, '').replace(/[-()]/g, '');
+      
+      // Si el número ya tiene código de país (empieza con +), usarlo directamente
+      if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+      } else {
+        // Agregar código de país según el país del usuario
+        const countryCode = this.getCountryCode(country);
+        if (countryCode) {
+          cleanPhone = countryCode + cleanPhone;
+        }
+      }
+      
+      // Abrir WhatsApp Web/App con el número
+      const whatsappUrl = `https://wa.me/${cleanPhone}`;
+      window.open(whatsappUrl, '_blank');
+    },
+    
+    getCountryCode(country) {
+      // Mapeo de países a códigos de país para WhatsApp
+      const countryCodes = {
+        'Ecuador': '593',
+        'Perú': '51',
+        'Argentina': '54',
+        'Bolivia': '591',
+        'Colombia': '57',
+        'Costa Rica': '506',
+        'Chile': '56',
+      };
+      
+      return countryCodes[country] || null;
     },
   },
 
