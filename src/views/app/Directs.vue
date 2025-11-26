@@ -365,12 +365,17 @@ export default {
     },
     
     formatPoints(points) {
-      // Formatear puntos con ceros a la izquierda (6 dígitos)
-      if (points === null || points === undefined) {
-        return '000000';
+      // Si no tiene puntos o es null/undefined, mostrar 0
+      if (points === null || points === undefined || points === '') {
+        return '0';
       }
       const pts = Number(points) || 0;
-      return String(pts).padStart(6, '0');
+      // Si tiene decimales, mostrar máximo 2 decimales
+      if (pts % 1 !== 0) {
+        return pts.toFixed(2);
+      }
+      // Si no tiene decimales, mostrar el número entero
+      return String(pts);
     },
     
     openWhatsApp(phone, country) {
