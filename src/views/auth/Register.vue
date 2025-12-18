@@ -83,7 +83,7 @@
       </div> <br>
 
       <div class="input-container">
-        <i class="icon fa-solid fa-envelope-open"></i>
+      <i class="icon fa-solid fa-envelope-open"></i>
         <input type="email" class="input" placeholder="Correo electrónico"
         v-model.trim="email"
         :class="{'error': error.email}"
