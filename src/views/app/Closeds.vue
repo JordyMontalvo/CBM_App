@@ -26,8 +26,8 @@
         <p>Puntaje personal: {{ node.points }}</p>
         <p>Puntaje grupal: {{ node._total }}</p>
         <p>Activación:
-          <span v-if="node.activated">Full</span>
-          <span v-else>Simple</span>
+          <span v-if="node.activated">Activado</span>
+          <span v-else>No Activado</span>
         </p>
         <br>
         <p>Residual:</p>
