@@ -16,7 +16,7 @@
       <i class="burger fas fa-bars" @click="opened"></i>
 
       <h4>{{ name }} {{ lastName }} <i class="avatar fas fa-user"
-                      :class="{'yellow': affiliated, 'blue': _activated, 'green': activated}"></i>
+                      :class="{'yellow': affiliated, 'green': activated}"></i>
       </h4>
 
     </header>
