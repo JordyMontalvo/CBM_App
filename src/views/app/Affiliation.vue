@@ -81,8 +81,11 @@
             </p>
           </small> <br>
 
-          <small>
+          <small :class="{ 'red': parseFloat(price) < selec_plan.amount }">
             Total: <span class="_strong">${{ price }} - {{ final_plan_name }}</span>
+          </small> <br>
+          <small v-if="parseFloat(price) < selec_plan.amount" style="color: red;">
+            * Falta ${{ (selec_plan.amount - parseFloat(price)).toFixed(2) }} para el paquete {{ selec_plan.name }}
           </small> <br><br>
 
           <i class="icon fa-solid fa-briefcase"></i>
@@ -164,6 +167,7 @@
 
           <small v-if="error" style="color: red;">{{ error }}<br></small>
           <small class="alert" v-if="error_price">Agregue más productos <br></small>
+          <small class="alert" v-if="parseFloat(price) < selec_plan.amount">El monto no alcanza para el paquete {{ selec_plan.name }} <br></small>
 
           <button class="button" v-show="!sending" @click="POST">Enviar Afiliación</button>
           <button class="button" v-show= "sending" disabled>Enviando Voucher ...</button>
@@ -401,6 +405,11 @@ export default {
         return
       }
 
+      if (parseFloat(this.price) < this.selec_plan.amount) {
+        this.error = `El monto mínimo para el paquete ${this.selec_plan.name} es $${this.selec_plan.amount}`
+        return
+      }
+
       if (!office) {
         this.error = 'Seleccione oficina'
         return
@@ -458,6 +467,10 @@ export default {
     max-height 240px
 
   ._strong
+    font-weight 600
+
+  .red
+    color red
     font-weight 600
 
 </style>
