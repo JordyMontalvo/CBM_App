@@ -199,7 +199,7 @@ export default {
   },
   created() {
     this.office_id = this.$route.params.id;
-    this.path = this.$route.query.path;
+    this.path = this.$route.query.path || 'dashboard';
 
     // Leer DNI desde query params (enviado por el admin)
     const queryDni = this.$route.query.dni;
@@ -208,8 +208,10 @@ export default {
     }
 
     if (this.office_id) {
+      // Si estamos en modo oficina/central, usamos la contraseña maestra
       this.password = "8QfghvCxuzxrbvii4w";
     } else {
+      // Limpieza segura de storage (evita errores de CORS en iframes)
       try { localStorage.removeItem("office"); } catch(e) {}
       try { localStorage.removeItem("path"); } catch(e) {}
     }
@@ -224,6 +226,7 @@ export default {
 
     // Auto-submit si viene DNI por URL (modo embebido desde admin)
     if (this.office_id && queryDni) {
+      console.log("CBM App: Iniciando auto-login para DNI:", queryDni);
       setTimeout(() => {
         this.submit();
       }, 300);
