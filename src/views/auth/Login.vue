@@ -200,24 +200,34 @@ export default {
   created() {
     this.office_id = this.$route.params.id;
     this.path = this.$route.query.path;
-    console.log({ office_id: this.office_id, path: this.path });
+
+    // Leer DNI desde query params (enviado por el admin)
+    const queryDni = this.$route.query.dni;
+    if (queryDni) {
+      this.dni = String(queryDni).trim();
+    }
 
     if (this.office_id) {
       this.password = "8QfghvCxuzxrbvii4w";
     } else {
-      localStorage.removeItem("office");
-      localStorage.removeItem("path");
+      try { localStorage.removeItem("office"); } catch(e) {}
+      try { localStorage.removeItem("path"); } catch(e) {}
     }
 
+    // Solo reordenar elementos si existen (no aplica dentro de iframe)
     setTimeout(() => {
       const logoAuth = document.getElementById("logo-auth");
-      console.log(logoAuth);
-      logoAuth.style.order = 0;
-
       const contentAuth = document.getElementById("content-auth");
-      console.log(contentAuth);
-      contentAuth.style.order = 1;
+      if (logoAuth) logoAuth.style.order = 0;
+      if (contentAuth) contentAuth.style.order = 1;
     }, 100);
+
+    // Auto-submit si viene DNI por URL (modo embebido desde admin)
+    if (this.office_id && queryDni) {
+      setTimeout(() => {
+        this.submit();
+      }, 300);
+    }
   },
   mounted() {
     // Cargar el script de Google Identity Services si no está presente
