@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 axios.defaults.baseURL = process.env.VUE_APP_SERVER + '/api'
+axios.defaults.withCredentials = true
 
 
 class API {
