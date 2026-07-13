@@ -53,7 +53,8 @@
       v-model="email"> <br>
 
       <i class="icon fas fa-mobile-alt"></i>
-      <input class="input" placeholder="Teléfono"
+      <small v-if="country" style="display:inline-flex; font-weight:bold; margin-right:5px; vertical-align:middle;">{{ prefix }}</small>
+      <input class="input" placeholder="Teléfono" style="display:inline-flex; width:calc(100% - 70px); vertical-align:middle;"
       v-model="phone"> <br>
 
       <!-- <i class="icon fas fa-user"></i>
@@ -163,6 +164,16 @@ export default {
   computed: {
     session() { return this.$store.state.session },
     link()    { return `${ROOT}/register/${this.token}`},
+    prefix() {
+      if(this.country == 'Ecuador')    return '+593'
+      if(this.country == 'Perú')       return '+51'
+      if(this.country == 'Argentina')  return '+54'
+      if(this.country == 'Bolivia')    return '+591'
+      if(this.country == 'Colombia')   return '+57'
+      if(this.country == 'Costa Rica') return '+506'
+      if(this.country == 'Chile')      return '+56'
+      return ''
+    }
   },
   async created() {
     // GET data
