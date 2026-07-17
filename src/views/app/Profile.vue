@@ -53,9 +53,10 @@
       v-model="email"> <br>
 
       <i class="icon fas fa-mobile-alt"></i>
-      <small v-if="country" style="display:inline-flex; font-weight:bold; margin-right:5px; vertical-align:middle;">{{ prefix }}</small>
-      <input class="input" placeholder="Teléfono" style="display:inline-flex; width:calc(100% - 70px); vertical-align:middle;"
-      v-model="phone"> <br>
+      <div style="display:inline-block; position:relative; width:330px; margin: 8px 0; vertical-align: middle;">
+        <small v-if="country" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-weight:bold; color: #43078C; z-index: 1; pointer-events: none;">{{ prefix }}</small>
+        <input class="input" placeholder="Teléfono" v-model="phone" :style="country ? 'padding-left: 55px; width: 100%; margin: 0; box-sizing: border-box;' : 'width: 100%; margin: 0; box-sizing: border-box;'">
+      </div> <br>
 
       <!-- <i class="icon fas fa-user"></i>
       <input class="input" placeholder="edad"
@@ -70,8 +71,9 @@
       <input class="input" placeholder="Dirección"
       v-model="address"> <br>
 
-      <router-link to="/security">
-        <button class="button">Persona de confianza</button>
+      <i class="icon fas fa-shield-alt" style="visibility: hidden;"></i>
+      <router-link to="/security" style="display: inline-block;">
+        <button class="button" style="width: 330px; height: 48px; margin: 8px 0;">Persona de confianza</button>
       </router-link> <br>
 
       <br>
@@ -112,8 +114,9 @@
       <input class="input" placeholder="Código interbancario" :disabled="ibk_disabled"
       v-model="ibk"> <br> -->
 
-      <button class="button" v-show="!sending" @click="UPDATE">Guardar</button>
-      <button class="button" v-show= "sending" disabled>Guardando datos ...</button>
+      <i class="icon fas fa-save" style="visibility: hidden;"></i>
+      <button class="button" v-show="!sending" @click="UPDATE" style="width: 330px; height: 48px; margin: 8px 0; vertical-align: middle;">Guardar</button>
+      <button class="button" v-show= "sending" disabled style="width: 330px; height: 48px; margin: 8px 0; vertical-align: middle;">Guardando datos ...</button>
       <br>
       <br>
     </section>
