@@ -41,6 +41,7 @@
           <option value="Colombia"  >🇨🇴 Colombia</option>
           <option value="Costa Rica">🇨🇷 Costa Rica</option>
           <option value="Chile"     >🇨🇱 Chile</option>
+          <option value="España"    >🇪🇸 España</option>
         </select>
       </div> <br>
 
@@ -211,6 +212,7 @@ export default {
       if(this.country == 'Colombia')   return '+57'
       if(this.country == 'Costa Rica') return '+506'
       if(this.country == 'Chile')      return '+56'
+      if(this.country == 'España')     return '+34'
     },
   },
   created() {

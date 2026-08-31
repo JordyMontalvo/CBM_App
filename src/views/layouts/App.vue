@@ -10,6 +10,7 @@
         <span v-if="country == 'Argentina'"  style="font-size: 28px;">🇦🇷</span>
         <span v-if="country == 'Chile'"      style="font-size: 28px;">🇨🇱</span>
         <span v-if="country == 'Costa Rica'" style="font-size: 28px;">🇨🇷</span>
+        <span v-if="country == 'España'"     style="font-size: 28px;">🇪🇸</span>
           &nbsp;&nbsp;&nbsp;Compañia Brillante Mundial
       </h3>
 

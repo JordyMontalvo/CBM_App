@@ -175,6 +175,7 @@ export default {
       if(this.country == 'Colombia')   return '+57'
       if(this.country == 'Costa Rica') return '+506'
       if(this.country == 'Chile')      return '+56'
+      if(this.country == 'España')     return '+34'
       return ''
     }
   },

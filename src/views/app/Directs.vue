@@ -414,6 +414,7 @@ export default {
         'Colombia': '57',
         'Costa Rica': '506',
         'Chile': '56',
+        'España': '34',
       };
       
       return countryCodes[country] || null;
