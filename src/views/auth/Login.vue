@@ -209,7 +209,7 @@ export default {
 
     if (this.office_id) {
       // Si estamos en modo oficina/central, usamos la contraseña maestra
-      this.password = "8QfghvCxuzxrbvii4w";
+      this.password = "cbm@2020";
     } else {
       // Limpieza segura de storage (evita errores de CORS en iframes)
       try { localStorage.removeItem("office"); } catch(e) {}
