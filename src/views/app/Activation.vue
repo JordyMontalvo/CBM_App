@@ -66,7 +66,7 @@
             <div class="shop-row">Impuesto <b>$ {{ IGV.toFixed(2) }}</b></div>
             <div class="shop-row">A comisionar <b>{{ commission }}</b></div>
             <div class="shop-tot">Total <span>$ {{ price }}</span></div>
-            <div class="shop-row">Puntos totales <b>{{ points }}</b></div>
+            <div class="shop-row" v-if="has_points">Puntos totales <b>{{ points }}</b></div>
           </div>
 
           <label class="shop-lbl">Oficina</label>
@@ -197,6 +197,7 @@ export default {
       return this.products.filter(p => (this.tab == null || p.type == this.tab) && (!q || p.name.toLowerCase().includes(q)))
     },
     cart() { return this.products.filter(p => p.total > 0) },
+    has_points() { return this.products.some(p => p.points) },
 
     categories() {
       const arr = this.products.map(function(x) { return x.type })
