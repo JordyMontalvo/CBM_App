@@ -1,78 +1,86 @@
 <template>
   <App :session="session">
+    <div class="shop">
+      <nav class="shop-tabs">
+        <router-link to="/activation">Comprar</router-link>
+        <router-link to="/activations">Historial</router-link>
+      </nav>
 
-    <h4 class="tabs">
-      <router-link class="tab" to="/activation">
-        Comprar
-      </router-link> &nbsp;&nbsp;
-      <router-link class="tab" to="/activations">
-        Historial
-      </router-link>
-    </h4>
+      <i class="load" v-if="loading"></i>
 
-    <i class="load" v-if="loading"></i> <br>
+      <section v-if="!loading">
+        <h1 class="shop-title">Historial de compras</h1>
+        <p class="shop-sub">Revisa tus pedidos, su estado de aprobación, los puntos ganados y descarga tus boletas.</p>
 
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>1</th>
-          <th>2</th>
-          <th>3</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td :class="{'green': arr[0]}">250</td>
-          <td :class="{'green': arr[1]}">450</td>
-          <td :class="{'green': arr[2]}">650</td>
-        </tr>
-      </tbody>
-    </table> -->
+        <div class="shop-kpis">
+          <div class="shop-kpi plan">
+            <small>Plan actual</small>
+            <b v-if="current_plan">{{ current_plan.name }} · $ {{ current_plan.amount }}</b>
+            <small>Acumulados: {{ upgrade_arr }} · Mes {{ upgrade_pos + 1 }}</small>
+          </div>
+          <div class="shop-kpi"><small>Total comprado (aprobado)</small><b>$ {{ approved_price.toFixed(2) }}</b></div>
+          <div class="shop-kpi"><small>Puntos (aprobados)</small><b>{{ approved_points }}</b></div>
+          <div class="shop-kpi"><small>Pedidos</small><b>{{ activations.length }}</b></div>
+        </div>
 
-    <div class="scroll" v-if="!loading">
+        <div class="shop-bar">
+          <input class="shop-search" v-model="search" placeholder="🔍 Buscar producto...">
+          <span class="shop-cat" v-for="f in filters_status" :key="f.value" :class="{ on: status == f.value }" @click="status = f.value">{{ f.label }}</span>
+          <select class="shop-sel" v-model="months">
+            <option :value="0">Todas las fechas</option>
+            <option :value="1">Último mes</option>
+            <option :value="6">Últimos 6 meses</option>
+            <option :value="12">Último año</option>
+          </select>
+        </div>
 
-      <small>
-        plan: {{ current_plan.name }} - ${{ current_plan.amount }} <br>
-        acumulados: {{ upgrade_arr }} - mes: {{ upgrade_pos + 1 }}
-      </small>
+        <div class="shop-tablewrap">
+          <table class="shop-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Productos</th>
+                <th>Monto</th>
+                <th>Puntos</th>
+                <th>Voucher</th>
+                <th>Estado</th>
+                <th>Boleta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="!page_items.length"><td colspan="7" style="text-align:center;color:var(--mut)">No hay pedidos</td></tr>
+              <tr v-for="activation in page_items" :key="activation.id">
+                <td>{{ activation.date | date }}</td>
+                <td>
+                  <div class="shop-prod">
+                    <span v-for="product in activation.products" v-if="product.total != 0">{{ product.name }} × {{ product.total }}</span>
+                  </div>
+                </td>
+                <td><b>{{ activation.price | price }}</b></td>
+                <td style="color:var(--p);font-weight:800">{{ activation.points }}</td>
+                <td>
+                  <a class="shop-vou" :href="activation.voucher" target="_blank" v-if="activation.voucher">
+                    <img :src="activation.voucher">
+                  </a>
+                </td>
+                <td><span class="shop-st" :class="activation.status">● {{ activation.status | status }}</span></td>
+                <td>
+                  <a class="shop-bol" :href="`${INVOICE_ROOT}?id=${activation.id}`" target="_blank" v-if="activation.status == 'approved'">📄 Boleta</a>
+                  <span v-else style="color:#bbb">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <br>
-      <br>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Productos</th>
-            <th>Monto</th>
-            <th>Puntos</th>
-            <th>Voucher</th>
-            <th>Estado</th>
-            <th>Boleta</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="activation in activations">
-            <td>{{ activation.date | date }}</td>
-            <td>
-              <div v-for="product in activation.products" v-if="product.total != 0">
-                {{ product.name }} - {{ product.total }}
-              </div>
-            </td>
-            <td>{{ activation.price | price }}</td>
-            <td>{{ activation.points }}</td>
-            <td>
-              <a :href="activation.voucher" target="_blank">
-                <img :src="activation.voucher" style="max-height: 80px; max-width: 80px">
-              </a>
-            </td>
-            <td>{{ activation.status | status }}</td>
-            <td><a :href=" `${INVOICE_ROOT}?id=${activation.id}` " target="_blank" style="color: gray;" v-if="activation.status == 'approved'">boleta</a></td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="shop-pager">
+          <span>Mostrando {{ page_items.length }} de {{ filtered.length }} pedidos</span>
+          <div class="shop-pages" v-if="pages > 1">
+            <button v-for="n in pages" :key="n" :class="{ on: page == n }" @click="page = n">{{ n }}</button>
+          </div>
+        </div>
+      </section>
     </div>
-
   </App>
 </template>
 
@@ -93,11 +101,51 @@ export default {
       // arr: [0,0,0],
       loading: true,
       INVOICE_ROOT,
+
+      upgrade_arr:  null,
+      upgrade_pos:  0,
+      current_plan: null,
+
+      search: '',
+      status: null,
+      months: 0,
+      page:   1,
+      per_page: 10,
+      filters_status: [
+        { value: null,       label: 'Todos'      },
+        { value: 'approved', label: 'Aprobadas'  },
+        { value: 'pending',  label: 'Pendientes' },
+        { value: 'rejected', label: 'Rechazadas' },
+      ],
     }
   },
   computed: {
     session() { return this.$store.state.session },
+
+    approved() { return this.activations.filter(a => a.status == 'approved') },
+    approved_price()  { return this.approved.reduce((a, b) => a + parseFloat(b.price || 0), 0) },
+    approved_points() { return this.approved.reduce((a, b) => a + (b.points || 0), 0) },
+
+    filtered() {
+      const q    = this.search.trim().toLowerCase()
+      const from = new Date()
+      from.setMonth(from.getMonth() - this.months)
+
+      return this.activations.filter(a =>
+        (!this.status || a.status == this.status) &&
+        (!this.months || new Date(a.date) >= from) &&
+        (!q || (a.products || []).some(p => p.total != 0 && p.name.toLowerCase().includes(q)))
+      )
+    },
+    pages() { return Math.ceil(this.filtered.length / this.per_page) },
+    page_items() { return this.filtered.slice((this.page - 1) * this.per_page, this.page * this.per_page) },
   },
+  watch: {
+    search() { this.page = 1 },
+    status() { this.page = 1 },
+    months() { this.page = 1 },
+  },
+
   filters: {
     date(val) {
       return new Date(val).toLocaleDateString()
@@ -142,3 +190,5 @@ export default {
   },
 };
 </script>
+
+<style src="../../assets/style/shop.css"></style>

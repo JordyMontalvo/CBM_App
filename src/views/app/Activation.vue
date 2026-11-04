@@ -1,152 +1,120 @@
 <template>
   <App :session="session" :office_id="office_id">
+    <div class="shop">
+      <nav class="shop-tabs">
+        <router-link to="/activation">Comprar</router-link>
+        <router-link to="/activations" v-if="!office_id">Historial</router-link>
+      </nav>
 
-    <h4 class="tabs">
-      <router-link class="tab" to="/activation">
-        Comprar
-      </router-link> &nbsp;&nbsp;
-      <router-link class="tab" to="/activations" v-if="!office_id">
-        Historial
-      </router-link>
-    </h4>
+      <i class="load" v-if="loading"></i>
 
-    <h4>Puntos: {{ current_points }}</h4>
-    <h4>PRODUCTOS</h4>
+      <div class="shop-layout" v-if="!loading">
+        <div>
+          <h1 class="shop-title">Selecciona tus productos</h1>
+          <p class="shop-sub">Explora el catálogo, encuentra tus productos y agrégalos al carrito. Revisa cantidades, total y puntos antes de ordenar.</p>
 
-    <i class="load" v-if="loading"></i>
-
-    <section v-if="!loading">
-
-      <div class="flex">
-        <div style="width: 100%">
-
-          <img :src="product.img" style="max-width: 200px; margin: 12px 0; max-height: 200px;">
-
-          <div class="_tabs">
-            <p class="_tab" v-for="(category, i) in categories" @click="tab = category" :class="{'selected': tab == categories[i]}">{{ category }}</p>
+          <div class="shop-bar">
+            <div class="shop-pts">◆ Mis puntos <span>{{ current_points }}</span></div>
+            <input class="shop-search" v-model="search" placeholder="🔍 Búsqueda...">
           </div>
 
-          <!-- <div class="flex"> -->
+          <div class="shop-cats">
+            <span class="shop-cat" :class="{ on: tab == null }" @click="tab = null">Todos</span>
+            <span class="shop-cat" v-for="category in categories" :key="category" :class="{ on: tab == category }" @click="tab = category">{{ category }}</span>
+          </div>
 
-            <div class="_tab_content" v-for="(category, i) in categories" v-show="tab == categories[i]">
-              <article class="product" v-for="(product, i) in products" @click="touch(i)" v-if="product.type == category">
-                <small>
-                  <p class="_name">{{ product.name }}</p>
-                  <span>Val. a comisionar
-                    <i v-if="product.val">{{ product.val   }}</i>
-                    <i v-else>            {{ product.price }}</i>
-                    &nbsp; &nbsp; <i class="_price">$ {{ product.price }}</i></span>
-                </small>
+          <div class="shop-count">Mostrando {{ filtered.length }} de {{ products.length }} productos</div>
 
-                <div class="control">
-                  <i class="fas fa-minus-square" @click="less(product)"></i>
-                  <input v-model="product.total" readonly>
-                  <i class="fas fa-plus-square" @click="more(product)"></i>
-                </div>
-              </article>
-            </div> <br>
+          <div class="shop-grid">
+            <article class="shop-card" v-for="product in filtered" :key="product.id" :class="{ sel: product.total > 0 }" @click="product_touch(product)">
+              <span class="shop-badge" v-if="product.points">★ {{ product.points }} pts</span>
+              <div class="shop-img"><img :src="product.img" :alt="product.name"></div>
+              <div class="shop-body">
+                <div class="shop-name">{{ product.name }}</div>
+                <div class="shop-type">{{ product.type }}</div>
+                <div class="shop-row">Val. a comisionar <b>{{ product.val ? product.val : product.price }}</b></div>
+                <div class="shop-price">$ {{ product.price }}</div>
+              </div>
+              <div class="shop-qty" v-if="product.total > 0">
+                <button @click.stop="less(product)">−</button>
+                <b>{{ product.total }}</b>
+                <button @click.stop="more(product)">+</button>
+              </div>
+              <button class="shop-add" v-else @click.stop="more(product)">🛒 Agregar</button>
+            </article>
+          </div>
+        </div>
 
+        <aside class="shop-cart">
+          <h2>🛒 Carrito de compras</h2>
+          <div class="shop-hint">Puedes hacer scroll para ver todos tus productos.</div>
 
-          <small>
-            Resumen: <br>
-            <p class="_light" v-for="(product, i) in products" v-if="product.total > 0">
-              {{ product.total }} {{ product.name }}
-            </p>
-          </small> <br>
+          <div class="shop-items">
+            <div class="shop-empty" v-if="!total">Tu carrito está vacío.<br><small>Agrega productos para comenzar.</small></div>
+            <div class="shop-it" v-for="product in cart" :key="product.id">
+              <div class="shop-th"><img :src="product.img"></div>
+              <div class="n"><b>{{ product.name }}</b><small>$ {{ product.price }}<span v-if="product.points"> · {{ product.points }} pts</span></small></div>
+              <div class="shop-mini"><button @click="less(product)">−</button>{{ product.total }}<button @click="more(product)">+</button></div>
+              <b>$ {{ (product.price * product.total).toFixed(2) }}</b>
+            </div>
+          </div>
 
+          <div class="shop-sum">
+            <h4>Resumen</h4>
+            <div class="shop-row">Total productos <b>{{ total }} items</b></div>
+            <div class="shop-row">Subtotal <b>$ {{ (price - IGV).toFixed(2) }}</b></div>
+            <div class="shop-row">Impuesto <b>$ {{ IGV.toFixed(2) }}</b></div>
+            <div class="shop-row">A comisionar <b>{{ commission }}</b></div>
+            <div class="shop-tot">Total <span>$ {{ price }}</span></div>
+            <div class="shop-row">Puntos totales <b>{{ points }}</b></div>
+          </div>
 
-
-          <small>Impuesto: {{ IGV.toFixed(2) }}</small> <br>
-
-          <i class="icon fas fa-dollar-sign"></i>
-          <input class="input" readonly v-model="_price"> <br>
-
-          <i class="icon fas fa-gem"></i>
-          <input class="input" readonly v-model="_points"> <br>
-
-          <i class="icon fa-solid fa-briefcase"></i>
-          <select class="input" v-model="office" v-if="!pending">
+          <label class="shop-lbl">Oficina</label>
+          <select class="shop-inp" v-model="office" v-if="!pending">
             <option value="null" disabled>Oficina</option>
             <option v-for="office in offices" :value="office">{{ office.name }}</option>
-          </select> <br>
+          </select>
+          <div class="shop-office" v-if="office && office.name">{{ office.address }}<br>{{ office.accounts }}</div>
 
-          <small v-if="office">{{ office.address }}</small> <br>
-
-          <div v-if="office">
-            <textarea readonly class="input" style="color: gray; width: 300px;" rows="5">{{ office.accounts }}</textarea> <br><br>
+          <label class="shop-check"><input type="checkbox" v-model="check"> Deseo usar mi saldo</label>
+          <div class="shop-bal" v-show="check">
+            <div class="shop-row">Saldo no disponible <b>{{ _balance }}</b></div>
+            <div class="shop-row">Saldo disponible <b>{{ balance }}</b></div>
+            <div class="shop-row" v-if="remaining > 0">Restan <b>{{ remaining }}</b></div>
           </div>
-
-          <label>
-            <input type="checkbox" v-model="check">
-            <small>Deseo usar mi saldo</small>
-          </label> <br>
-
-          <div v-show="check">
-            <small>Saldo no disponible: {{ _balance }}</small> <br>
-            <small>Saldo disponible: {{ balance }}</small> <br>
-            <small v-if="remaining > 0">restan: {{ remaining }}</small>
-          </div>
-
-          <br>
 
           <div v-show="!(check && remaining == 0)">
-
-            <small>Medio de Pago</small>
-            <br>
-
-            <div v-if="check">
-              <small v-if="plan == 'default'">Cash: {{ balance + selec_plan.pay }}</small>
-              <small v-else>                  Cash: {{_balance + balance        }}</small>
-
-              <br>
+            <label class="shop-lbl">Medio de pago</label>
+            <div class="shop-row" v-if="check">Cash <b>{{ _balance + balance }}</b></div>
+            <div class="shop-pm">
+              <label class="shop-opt" :class="{ on: pay_method == 'bank' }"><input type="radio" :value="'bank'" v-model="pay_method"> Banco</label>
+              <label class="shop-opt" :class="{ on: pay_method == 'cash' }"><input type="radio" :value="'cash'" v-model="pay_method"> Efectivo</label>
             </div>
 
-            <label>
-              <input type="radio" :value="'bank'" v-model="pay_method">
-              <small>Banco</small>
-            </label> <br>
+            <div class="shop-row" style="margin-top:8px" v-if="pay_method">Monto <b>{{ remaining }}</b></div>
 
-            <label>
-              <input type="radio" :value="'cash'" v-model="pay_method">
-              <small>Efectivo</small> <br>
-            </label>
-
-            <div v-if="pay_method == 'bank'"> <br>
-              <small>Monto: {{ remaining }}</small> <br>
-
-              <input class="input" v-model="bank" placeholder="Banco"> <br>
-              <input class="input" v-model="date" placeholder="Fecha" type="date"> <br>
-              <input class="input" v-model="voucher_number" placeholder="Número de Voucher" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')"> <br>
-
-              <label>
-                <span class="input" v-show="!voucher">Comprobante de pago</span>
-
-                <img class="voucher" :src="voucher">
-
+            <div v-if="pay_method == 'bank'">
+              <div class="shop-g2">
+                <input class="shop-inp" v-model="bank" placeholder="Banco">
+                <input class="shop-inp" v-model="date" placeholder="Fecha" type="date">
+              </div>
+              <input class="shop-inp" style="margin-top:8px" v-model="voucher_number" placeholder="Número de Voucher" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')">
+              <label class="shop-up">
+                <span v-show="!voucher">⬆ Subir comprobante de pago</span>
+                <img v-show="voucher" :src="voucher">
                 <input type="file" @change="onFileChange">
               </label>
             </div>
-
-            <div v-if="pay_method == 'cash'"> <br>
-              <small>Monto: {{ remaining }}</small> <br>
-            </div>
-
           </div>
 
+          <small class="shop-error" v-if="error">{{ error }}</small>
+          <small class="shop-ok" v-if="success">Activación Enviada</small>
 
-          <small v-if="error" style="color: red;"><br> {{ error }}</small>
-          <small v-if="success" class="success">Activación Enviada</small> <br>
-
-          <button class="button" v-show="!sending" @click="POST">Ordenar productos</button>
-          <button class="button" v-show= "sending" disabled>Enviando orden ...</button>
-
-          <br><br><br>
-
-        </div>
-
+          <button class="shop-btn" v-show="!sending" @click="POST">Ordenar productos</button>
+          <button class="shop-btn" v-show="sending" disabled>Enviando orden ...</button>
+        </aside>
       </div>
-
-    </section>
+    </div>
   </App>
 </template>
 
@@ -190,6 +158,8 @@ export default {
       bank: null,
       date: null,
       voucher_number: null,
+
+      search: '',
     }
   },
   computed: {
@@ -221,6 +191,12 @@ export default {
         return this.price
       }
     },
+
+    filtered() {
+      const q = this.search.trim().toLowerCase()
+      return this.products.filter(p => (this.tab == null || p.type == this.tab) && (!q || p.name.toLowerCase().includes(q)))
+    },
+    cart() { return this.products.filter(p => p.total > 0) },
 
     categories() {
       const arr = this.products.map(function(x) { return x.type })
@@ -264,14 +240,18 @@ export default {
 
     this.offices = data.offices
 
-    this.tab = this.categories[0]
+    this.tab = null
 
   },
   methods: {
     touch(i) {
       this.product = this.products[i]
     },
+    product_touch(product) {
+      this.product = product
+    },
     more(product) {
+
       if (product.total == 30) return
       product.total += 1
     },
@@ -368,34 +348,4 @@ export default {
 </script>
 
 
-<style lang="stylus">
-  ._tabs
-    display flex
-    overflow auto
-    ._tab
-      padding 8px 12px
-      background white
-      border-radius 12px 12px 0 0
-      font-weight 300
-      font-size 12px
-      cursor pointer
-      text-wrap nowrap
-      &.selected
-        font-weight 600
-
-  .product
-    small
-      width 240px
-      font-weight 300
-    ._name
-      font-weight 600
-      font-size 12.5px
-
-  ._light
-    font-weight 300
-    font-size 12.5px
-
-  ._price
-    font-weight 600
-
-</style>
+<style src="../../assets/style/shop.css"></style>
