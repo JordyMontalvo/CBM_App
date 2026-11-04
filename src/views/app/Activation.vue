@@ -108,11 +108,22 @@
           </div>
 
           <small class="shop-error" v-if="error">{{ error }}</small>
-          <small class="shop-ok" v-if="success">Activación Enviada</small>
 
           <button class="shop-btn" v-show="!sending" @click="POST">Ordenar productos</button>
           <button class="shop-btn" v-show="sending" disabled>Enviando orden ...</button>
         </aside>
+      </div>
+
+      <div class="shop-modal" v-if="success" @click.self="success = false">
+        <div class="shop-modal-box">
+          <div class="shop-modal-icon">✓</div>
+          <h2>¡Pedido enviado!</h2>
+          <p>Tu orden quedó <b>pendiente de aprobación</b>. Cuando la oficina confirme tu pago se sumarán tus puntos y podrás ver tu boleta en el historial.</p>
+          <div class="shop-modal-btns">
+            <button class="shop-btn light" @click="success = false">Seguir comprando</button>
+            <router-link class="shop-btn" to="/activations">Ver historial</router-link>
+          </div>
+        </div>
       </div>
     </div>
   </App>
