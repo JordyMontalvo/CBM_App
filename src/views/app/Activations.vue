@@ -62,6 +62,9 @@
                   <a class="shop-vou" :href="activation.voucher" target="_blank" v-if="activation.voucher">
                     <img :src="activation.voucher">
                   </a>
+                  <a class="shop-vou" :href="activation.voucher2" target="_blank" v-if="activation.voucher2" style="margin-left:4px">
+                    <img :src="activation.voucher2">
+                  </a>
                 </td>
                 <td><span class="shop-st" :class="activation.status">● {{ activation.status | status }}</span></td>
                 <td>

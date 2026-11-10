@@ -108,11 +108,22 @@
                 <input class="shop-inp" v-model="bank" placeholder="Banco">
                 <input class="shop-inp" v-model="date" placeholder="Fecha" type="date">
               </div>
-              <input class="shop-inp" style="margin-top:8px" v-model="voucher_number" placeholder="Número de Voucher" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')">
+              <div class="shop-vlbl">Voucher 1</div>
+              <input class="shop-inp" v-model="voucher_number" placeholder="Código de operación" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')">
               <label class="shop-up">
                 <span v-show="!voucher">⬆ Subir comprobante de pago</span>
                 <img v-show="voucher" :src="voucher">
-                <input type="file" @change="onFileChange">
+                <input type="file" accept="image/*" @change="onFileChange">
+              </label>
+
+              <div class="shop-vlbl">Voucher 2 <small>(opcional)</small>
+                <button type="button" class="shop-vclear" v-if="voucher2 || voucher_number2" @click="clear_voucher2">✕ Quitar</button>
+              </div>
+              <input class="shop-inp" v-model="voucher_number2" placeholder="Código de operación" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')">
+              <label class="shop-up">
+                <span v-show="!voucher2">⬆ Subir segundo comprobante</span>
+                <img v-show="voucher2" :src="voucher2">
+                <input type="file" accept="image/*" ref="file2" @change="onFileChange2">
               </label>
             </div>
           </div>
@@ -185,6 +196,10 @@ export default {
       bank: null,
       date: null,
       voucher_number: null,
+
+      voucher2: null,
+      file2: null,
+      voucher_number2: null,
 
       search: '',
     }
@@ -318,12 +333,31 @@ export default {
       reader.readAsDataURL(this.file)
 
     },
+    onFileChange2(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      this.file2 = file
+      const reader = new FileReader()
+      reader.onload = (ev) => { this.voucher2 = ev.target.result }
+      reader.readAsDataURL(file)
+    },
+    clear_voucher2() {
+      this.voucher2 = null
+      this.file2 = null
+      this.voucher_number2 = null
+      if (this.$refs.file2) this.$refs.file2.value = ''
+    },
     reset() {
       console.log('reset ...')
 
       this.products.forEach(product => {
         product.total = 0
       })
+
+      this.voucher = null
+      this.file = null
+      this.voucher_number = null
+      this.clear_voucher2()
     },
     async POST() {
 
@@ -344,6 +378,15 @@ export default {
         }
         if (!voucher) {
           this.error = 'Voucher de pago'
+          return
+        }
+        // Voucher 2 es opcional, pero si se usa debe tener imagen y código.
+        if (this.voucher2 && !this.voucher_number2) {
+          this.error = 'Código de operación del voucher 2'
+          return
+        }
+        if (this.voucher_number2 && !this.voucher2) {
+          this.error = 'Comprobante del voucher 2'
           return
         }
       }
@@ -373,9 +416,14 @@ export default {
       // POST Affiliation
       this.sending = true
 
+      const use_voucher2 = pay_method == 'bank' && this.voucher2 && this.file2
+      let voucher2 = null
+      let voucher_number2 = use_voucher2 ? this.voucher_number2 : null
+
       let data
       try {
         if(voucher) voucher = await lib.upload(this.file, this.file.name, 'activations')
+        if(use_voucher2) voucher2 = await lib.upload(this.file2, this.file2.name, 'activations')
 
         const res = await api.Activation.POST(this.session, {
           products,
@@ -386,6 +434,8 @@ export default {
           bank,
           date,
           voucher_number,
+          voucher2,
+          voucher_number2,
         })
         data = res.data
       } catch (e) {
