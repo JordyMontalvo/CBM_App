@@ -22,6 +22,14 @@
             <span class="shop-cat" v-for="category in categories" :key="category" :class="{ on: selected.includes(category) }" @click="toggle_category(category)">{{ category }}</span>
           </div>
 
+          <div class="shop-summary">
+            <div class="shop-summary-tot">
+              <div>Monto: <b>$ {{ price }}</b></div>
+              <div>Puntos: <b>{{ points }} pts</b></div>
+            </div>
+            <button class="shop-summary-btn" @click="go_cart">🛒 Ver carrito<span v-if="total"> ({{ total }})</span></button>
+          </div>
+
           <div class="shop-count">Mostrando {{ filtered.length }} de {{ products.length }} productos</div>
 
           <div class="shop-grid">
@@ -44,7 +52,7 @@
           </div>
         </div>
 
-        <aside class="shop-cart">
+        <aside class="shop-cart" ref="cart">
           <h2>🛒 Carrito de compras</h2>
           <div class="shop-hint">Puedes hacer scroll para ver todos tus productos.</div>
 
@@ -181,7 +189,7 @@ export default {
       let price = this.products.reduce((a, b) => a + b.price * b.total * 1.00, 0.00)
       return price.toFixed(2)
     },
-    points() { return this.products.reduce((a, b) => a + b.points * b.total, 0) },
+    points() { return this.products.reduce((a, b) => a + (Number(b.points) || 0) * b.total, 0) },
     commission() { return this.products.reduce((a, b) => a + (b.val ? b.val : b.price) * b.total, 0) },
     total()  { return this.products.reduce((a, b) => a + b.total, 0) },
 
@@ -260,6 +268,10 @@ export default {
       const i = this.selected.indexOf(category)
       if (i > -1) this.selected.splice(i, 1)
       else this.selected.push(category)
+    },
+    go_cart() {
+      const el = this.$refs.cart
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     },
     clear_filters() {
       this.selected = []
