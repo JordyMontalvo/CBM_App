@@ -53,7 +53,9 @@
           </div>
         </div>
 
+        <BodyPortal :active="cart_open" active-class="shop shop-cart-pop" @backdrop="cart_open = false">
         <aside class="shop-cart" ref="cart">
+          <button class="shop-cart-close" v-if="cart_open" @click="cart_open = false" aria-label="Cerrar carrito">✕</button>
           <h2>🛒 Carrito de compras</h2>
           <div class="shop-hint">Puedes hacer scroll para ver todos tus productos.</div>
 
@@ -120,9 +122,11 @@
           <button class="shop-btn" v-show="!sending" @click="POST">Ordenar productos</button>
           <button class="shop-btn" v-show="sending" disabled>Enviando orden ...</button>
         </aside>
+        </BodyPortal>
       </div>
 
-      <div class="shop-modal" v-if="success" @click.self="success = false">
+      <BodyPortal :active="true" active-class="shop" v-if="success">
+      <div class="shop-modal" @click.self="success = false">
         <div class="shop-modal-box">
           <div class="shop-modal-icon">✓</div>
           <h2>¡Pedido enviado!</h2>
@@ -133,6 +137,7 @@
           </div>
         </div>
       </div>
+      </BodyPortal>
     </div>
   </App>
 </template>
@@ -141,10 +146,12 @@
 import App from '@/views/layouts/App'
 import api from '@/api'
 import lib from '@/lib'
+import BodyPortal from '@/components/BodyPortal'
 
 export default {
   components: {
     App,
+    BodyPortal,
   },
   data() {
     return {
@@ -172,6 +179,7 @@ export default {
 
       selected: [],
       show_card_commission: false,
+      cart_open: false,
 
       pay_method: null,
 
@@ -230,6 +238,14 @@ export default {
       return ret
     }
   },
+  watch: {
+    cart_open(open) {
+      document.body.style.overflow = open ? 'hidden' : ''
+    },
+  },
+  beforeDestroy() {
+    document.body.style.overflow = ''
+  },
   async created() {
     // GET data
     const { data } = await api.Activation.GET(this.session); console.log({ data })
@@ -272,8 +288,7 @@ export default {
       else this.selected.push(category)
     },
     go_cart() {
-      const el = this.$refs.cart
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      this.cart_open = true
     },
     clear_filters() {
       this.selected = []
@@ -374,6 +389,7 @@ export default {
 
       this.sending = false
 
+      this.cart_open = false
       this.success = true
 
       this.reset()
