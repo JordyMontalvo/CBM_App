@@ -4,6 +4,9 @@
 .shop-tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:18px}
 .shop-tabs a{padding:8px 2px;font-weight:600;color:var(--mut);font-size:15px;text-decoration:none}
 .shop-tabs a.router-link-exact-active,.shop-tabs a.on{color:var(--ink);border-bottom:3px solid var(--p)}
+.shop-tabs{align-items:center}
+.shop-tabs-pts{margin-left:auto;border:1px solid var(--p);border-radius:20px;padding:5px 14px;display:flex;gap:6px;align-items:center;font-weight:600;color:var(--pd);background:#fff;white-space:nowrap}
+.shop-tabs-pts span{font-weight:700}
 .shop-layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:24px;align-items:start}
 .shop-title{font-size:26px;font-weight:700;border-left:5px solid var(--p);padding-left:12px;margin:0}
 .shop-sub{color:var(--mut);margin:6px 0 16px;line-height:1.5;max-width:560px}

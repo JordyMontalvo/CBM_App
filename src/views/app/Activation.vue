@@ -4,6 +4,7 @@
       <nav class="shop-tabs">
         <router-link to="/activation">Comprar</router-link>
         <router-link to="/activations" v-if="!office_id">Historial</router-link>
+        <div class="shop-tabs-pts">◆ Puntos <span>{{ current_points || 0 }}</span></div>
       </nav>
 
       <i class="load" v-if="loading"></i>
@@ -14,7 +15,6 @@
           <p class="shop-sub">Explora el catálogo, encuentra tus productos y agrégalos al carrito. Revisa cantidades, total y puntos antes de ordenar.</p>
 
           <div class="shop-bar">
-            <div class="shop-pts">◆ Mis puntos <span>{{ current_points }}</span></div>
             <input class="shop-search" v-model="search" placeholder="🔍 Búsqueda...">
           </div>
 
