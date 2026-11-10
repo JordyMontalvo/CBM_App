@@ -129,11 +129,10 @@
       <div class="shop-modal" @click.self="success = false">
         <div class="shop-modal-box">
           <div class="shop-modal-icon">✓</div>
-          <h2>¡Pedido enviado!</h2>
+          <h2>¡Gracias por tu compra!</h2>
           <p>Tu orden quedó <b>pendiente de aprobación</b>. Cuando la oficina confirme tu pago se sumarán tus puntos y podrás ver tu boleta en el historial.</p>
-          <div class="shop-modal-btns">
-            <button class="shop-btn light" @click="success = false">Seguir comprando</button>
-            <router-link class="shop-btn" to="/activations">Ver historial</router-link>
+          <div class="shop-modal-btns one">
+            <router-link class="shop-btn" to="/dashboard">Ir al inicio</router-link>
           </div>
         </div>
       </div>
@@ -374,20 +373,34 @@ export default {
       // POST Affiliation
       this.sending = true
 
-      if(voucher) voucher = await lib.upload(this.file, this.file.name, 'activations')
+      let data
+      try {
+        if(voucher) voucher = await lib.upload(this.file, this.file.name, 'activations')
 
-      const { data } = await api.Activation.POST(this.session, {
-        products,
-        voucher,
-        office: office.id,
-        check,
-        pay_method,
-        bank,
-        date,
-        voucher_number,
-      })
+        const res = await api.Activation.POST(this.session, {
+          products,
+          voucher,
+          office: office.id,
+          check,
+          pay_method,
+          bank,
+          date,
+          voucher_number,
+        })
+        data = res.data
+      } catch (e) {
+        this.sending = false
+        this.error = 'No se pudo enviar la orden. Revisa tu conexión e inténtalo de nuevo.'
+        return
+      }
 
       this.sending = false
+
+      // Solo confirmar si el servidor aceptó la orden; si no, el carrito se conserva.
+      if (!data || data.error) {
+        this.error = (data && data.msg) || 'No se pudo enviar la orden. Inténtalo de nuevo.'
+        return
+      }
 
       this.cart_open = false
       this.success = true

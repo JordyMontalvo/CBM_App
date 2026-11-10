@@ -132,5 +132,6 @@ body>.shop{font-family:"Open Sans",sans-serif}
 .shop-modal-box h2{color:var(--pd);font-size:24px;margin:0 0 8px}
 .shop-modal-box p{color:var(--mut);line-height:1.6;font-size:14px}
 .shop-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.shop-modal-btns.one{grid-template-columns:1fr}
 .shop-modal-btns .shop-btn{text-decoration:none;font-size:14px}
 .shop-btn.light{background:#fff;color:var(--p);border:2px solid var(--p)}
