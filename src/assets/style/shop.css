@@ -16,7 +16,10 @@
 .shop-pts span{color:var(--pd);font-size:20px}
 .shop-search{flex:1;min-width:200px;background:#fff;border-radius:24px;padding:12px 20px;border:1px solid var(--line);font-size:13px;outline:none}
 .shop-search:focus{border-color:var(--turk)}
-.shop-cats{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.shop-cats{display:flex;gap:9px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px}
+.shop-cats::-webkit-scrollbar{display:none}
+.shop-cat{flex:0 0 auto;user-select:none}
+.shop-cat-clear{color:var(--red);border-color:var(--red)}
 .shop-cat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:8px 16px;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap}
 .shop-cat.on{background:var(--p);color:#fff;border-color:var(--p)}
 .shop-count{background:#fff;border-radius:10px;text-align:center;padding:9px;color:var(--mut);margin-bottom:14px}
@@ -111,7 +114,7 @@
 .shop-pages{display:flex;gap:6px}
 .shop-pages button{width:32px;height:32px;border-radius:8px;background:#fff;border:0;font-weight:600;cursor:pointer}
 .shop-pages button.on{background:var(--p);color:#fff}
-@media (max-width:1100px){.shop-layout{grid-template-columns:1fr}.shop-cart{position:static}.shop-kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:1100px){.shop-layout{grid-template-columns:minmax(0,1fr)}.shop-cart{position:static}.shop-kpis{grid-template-columns:1fr 1fr}}
 @media (max-width:600px){.shop-grid{grid-template-columns:1fr 1fr;gap:10px}.shop-kpis{grid-template-columns:1fr}.shop-title{font-size:21px}}
 .shop-tot.red span{color:var(--red)}
 /* pop-up de pedido enviado */

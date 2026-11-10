@@ -17,8 +17,9 @@
           </div>
 
           <div class="shop-cats">
-            <span class="shop-cat" :class="{ on: tab == null }" @click="tab = null">Todos</span>
-            <span class="shop-cat" v-for="category in categories" :key="category" :class="{ on: tab == category }" @click="tab = category">{{ category }}</span>
+            <span class="shop-cat shop-cat-clear" v-if="filters_active" @click="clear_filters">✕ Limpiar</span>
+            <span class="shop-cat" :class="{ on: selected.length == 0 }" @click="selected = []">Todos</span>
+            <span class="shop-cat" v-for="category in categories" :key="category" :class="{ on: selected.includes(category) }" @click="toggle_category(category)">{{ category }}</span>
           </div>
 
           <div class="shop-count">Mostrando {{ filtered.length }} de {{ products.length }} productos</div>
@@ -160,7 +161,7 @@ export default {
 
       pending: false,
 
-      tab: null,
+      selected: [],
 
       pay_method: null,
 
@@ -203,8 +204,9 @@ export default {
 
     filtered() {
       const q = this.search.trim().toLowerCase()
-      return this.products.filter(p => (this.tab == null || p.type == this.tab) && (!q || p.name.toLowerCase().includes(q)))
+      return this.products.filter(p => (this.selected.length == 0 || this.selected.includes(p.type)) && (!q || p.name.toLowerCase().includes(q)))
     },
+    filters_active() { return this.selected.length > 0 || this.search.trim() != '' },
     cart() { return this.products.filter(p => p.total > 0) },
     has_points() { return this.products.some(p => p.points) },
 
@@ -250,10 +252,19 @@ export default {
 
     this.offices = data.offices
 
-    this.tab = null
+    this.selected = []
 
   },
   methods: {
+    toggle_category(category) {
+      const i = this.selected.indexOf(category)
+      if (i > -1) this.selected.splice(i, 1)
+      else this.selected.push(category)
+    },
+    clear_filters() {
+      this.selected = []
+      this.search = ''
+    },
     touch(i) {
       this.product = this.products[i]
     },
