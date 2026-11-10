@@ -16,6 +16,8 @@
   >section
     display flex
     overflow hidden
+    overflow clip
+    min-width 0
     // layout
     .menu
     .content
@@ -27,6 +29,7 @@
       min-width 100%
       transform translate(-40%, 0)
       overflow hidden
+      overflow clip
       position relative
     &.open
       .menu
