@@ -39,7 +39,8 @@
               <div class="shop-body">
                 <div class="shop-name">{{ product.name }}</div>
                 <div class="shop-type">{{ product.type }}</div>
-                <div class="shop-row">Val. a comisionar <b>{{ product.val ? product.val : product.price }}</b></div>
+                <!-- Oculto temporalmente: su nueva ubicación se definirá luego. Para mostrarlo, poner show_card_commission en true. -->
+                <div class="shop-row" v-show="show_card_commission">Val. a comisionar <b>{{ product.val ? product.val : product.price }}</b></div>
                 <div class="shop-price">$ {{ product.price }}</div>
               </div>
               <div class="shop-qty" v-if="product.total > 0">
@@ -170,6 +171,7 @@ export default {
       pending: false,
 
       selected: [],
+      show_card_commission: false,
 
       pay_method: null,
 
