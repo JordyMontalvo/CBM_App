@@ -12,9 +12,7 @@
       <div class="shop-layout" v-if="!loading">
         <div>
           <h1 class="shop-title">Selecciona tus productos</h1>
-          <p class="shop-sub">Explora el catálogo, encuentra tus productos y agrégalos al carrito. Revisa cantidades, total y puntos antes de ordenar.</p>
-
-          <div class="shop-bar">
+          <div class="shop-bar shop-bar-top">
             <input class="shop-search" v-model="search" placeholder="🔍 Búsqueda...">
           </div>
 
