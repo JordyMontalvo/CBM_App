@@ -35,7 +35,7 @@
           <div class="shop-grid">
             <article class="shop-card" v-for="product in filtered" :key="product.id" :class="{ sel: product.total > 0 }" @click="product_touch(product)">
               <span class="shop-badge" v-if="product.points">★ {{ product.points }} pts</span>
-              <div class="shop-img"><img :src="product.img" :alt="product.name"></div>
+              <div class="shop-img"><img v-if="product.img" :src="product.img" :alt="product.name"><span v-else class="shop-noimg" aria-label="Sin imagen">🖼</span></div>
               <div class="shop-body">
                 <div class="shop-name">{{ product.name }}</div>
                 <div class="shop-type">{{ product.type }}</div>
@@ -62,7 +62,7 @@
           <div class="shop-items">
             <div class="shop-empty" v-if="!total">Tu carrito está vacío.<br><small>Agrega productos para comenzar.</small></div>
             <div class="shop-it" v-for="product in cart" :key="product.id">
-              <div class="shop-th"><img :src="product.img"></div>
+              <div class="shop-th"><img v-if="product.img" :src="product.img"><span v-else class="shop-noimg sm">🖼</span></div>
               <div class="n"><b>{{ product.name }}</b><small>$ {{ product.price }}<span v-if="product.points"> · {{ product.points }} pts</span></small></div>
               <div class="shop-mini"><button @click="less(product)">−</button>{{ product.total }}<button @click="more(product)">+</button></div>
               <b>$ {{ (product.price * product.total).toFixed(2) }}</b>

@@ -138,3 +138,5 @@ body>.shop{font-family:"Open Sans",sans-serif}
 .shop-modal-btns.one{grid-template-columns:1fr}
 .shop-modal-btns .shop-btn{text-decoration:none;font-size:14px}
 .shop-btn.light{background:#fff;color:var(--p);border:2px solid var(--p)}
+.shop-noimg{font-size:44px;opacity:.35;line-height:1}
+.shop-noimg.sm{font-size:20px}
