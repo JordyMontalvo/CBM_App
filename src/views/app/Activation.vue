@@ -16,6 +16,68 @@
             <input class="shop-search" v-model="search" placeholder="🔍 Búsqueda...">
           </div>
 
+          <!-- Alerta de ajuste dinámico de promociones -->
+          <div class="shop-promo-alert" v-if="promo_notification">
+            <span>ℹ️ {{ promo_notification }}</span>
+            <button type="button" class="shop-promo-alert-close" @click="promo_notification = null">✕</button>
+          </div>
+
+          <!-- Sección de Promociones de la Quincena -->
+          <div class="shop-promo-section" v-if="promotions && promotions.length > 0">
+            <div class="shop-promo-header">
+              <h2 class="shop-promo-title">✨ Promociones en Tienda</h2>
+              <div class="shop-promo-quota-pill">
+                Acumulado: ${{ total_eligible.toFixed(2) }} ({{ current_tramos }} tramo{{ current_tramos == 1 ? '' : 's' }} de $100)
+              </div>
+            </div>
+            <div class="shop-grid">
+              <article
+                class="shop-card promo-card"
+                v-for="promo in promotions"
+                :key="promo.id"
+                :class="{ 'is-blocked': promo_quota(promo).available === 0, sel: promo.total > 0 }"
+              >
+                <span class="shop-badge" :class="{ 'promo-badge-blocked': promo_quota(promo).available === 0 }">
+                  {{ promo_quota(promo).available > 0 ? '★ PROMOCIÓN' : '🔒 BLOQUEADA' }}
+                </span>
+                <div class="shop-img">
+                  <img v-if="promo.img && !promo.img_error" :src="promo.img" :alt="promo.name" @error="$set(promo, 'img_error', true)">
+                  <span v-else class="shop-noimg" aria-label="Sin imagen">🎁</span>
+                </div>
+                <div class="shop-body">
+                  <div class="shop-name">{{ promo.name }}</div>
+                  <div class="shop-type">1 tramo = {{ promo.units_per_100 || 1 }} unid.</div>
+                  <div class="shop-price">$ {{ Number(promo.price).toFixed(2) }}</div>
+                  <div class="shop-promo-hint" :class="promo_quota(promo).available > 0 ? 'available' : 'blocked'">
+                    {{ promo_status_text(promo) }}
+                  </div>
+                </div>
+
+                <div class="shop-qty" v-if="promo.total > 0">
+                  <button type="button" @click.stop="less_promo(promo)">−</button>
+                  <b>{{ promo.total }}</b>
+                  <button type="button" @click.stop="more_promo(promo)" :disabled="promo.total >= promo_quota(promo).available">+</button>
+                </div>
+                <button
+                  type="button"
+                  class="shop-add promo-blocked"
+                  v-else-if="promo_quota(promo).available === 0"
+                  disabled
+                >
+                  🔒 Bloqueada
+                </button>
+                <button
+                  type="button"
+                  class="shop-add"
+                  v-else
+                  @click.stop="more_promo(promo)"
+                >
+                  🛒 Agregar
+                </button>
+              </article>
+            </div>
+          </div>
+
           <div class="shop-cats">
             <span class="shop-cat shop-cat-clear" v-if="filters_active" @click="clear_filters">✕ Limpiar</span>
             <span class="shop-cat" :class="{ on: selected.length == 0 }" @click="selected = []">Todos</span>
@@ -63,8 +125,22 @@
             <div class="shop-empty" v-if="!total">Tu carrito está vacío.<br><small>Agrega productos para comenzar.</small></div>
             <div class="shop-it" v-for="product in cart" :key="product.id">
               <div class="shop-th"><img v-if="product.img && !product.img_error" :src="product.img" @error="$set(product, 'img_error', true)"><span v-else class="shop-noimg sm">🖼</span></div>
-              <div class="n"><b>{{ product.name }}</b><small>$ {{ product.price }}<span v-if="product.points"> · {{ product.points }} pts</span></small></div>
-              <div class="shop-mini"><button @click="less(product)">−</button>{{ product.total }}<button @click="more(product)">+</button></div>
+              <div class="n">
+                <b>
+                  {{ product.name }}
+                  <span class="shop-tag-promo" v-if="product.is_promo">Promo</span>
+                </b>
+                <small>$ {{ Number(product.price).toFixed(2) }}<span v-if="product.points"> · {{ product.points }} pts</span></small>
+              </div>
+              <div class="shop-mini">
+                <button type="button" @click="product.is_promo ? less_promo(product) : less(product)">−</button>
+                {{ product.total }}
+                <button
+                  type="button"
+                  @click="product.is_promo ? more_promo(product) : more(product)"
+                  :disabled="product.is_promo && product.total >= promo_quota(product).available"
+                >+</button>
+              </div>
               <b>$ {{ (product.price * product.total).toFixed(2) }}</b>
             </div>
           </div>
@@ -202,6 +278,10 @@ export default {
       voucher_number2: null,
 
       search: '',
+
+      promotions: [],
+      previous_eligible_amount: 0,
+      promo_notification: null,
     }
   },
   computed: {
@@ -209,13 +289,41 @@ export default {
     office_id() { return this.$store.state.office_id },
 
     price()   {
-      console.log('price')
-      let price = this.products.reduce((a, b) => a + b.price * b.total * 1.00, 0.00)
-      return price.toFixed(2)
+      let regPrice = (this.products || []).reduce((a, b) => a + (Number(b.price) || 0) * (b.total || 0), 0)
+      let promoPrice = (this.promotions || []).reduce((a, b) => a + (Number(b.price) || 0) * (b.total || 0), 0)
+      return (regPrice + promoPrice).toFixed(2)
     },
-    points() { return this.products.reduce((a, b) => a + (Number(b.points) || 0) * b.total, 0) },
-    commission() { return this.products.reduce((a, b) => a + (b.val ? b.val : b.price) * b.total, 0) },
-    total()  { return this.products.reduce((a, b) => a + b.total, 0) },
+    points() {
+      let regPoints = (this.products || []).reduce((a, b) => a + (Number(b.points) || 0) * (b.total || 0), 0)
+      let promoPoints = (this.promotions || []).reduce((a, b) => a + (Number(b.val) || 0) * (b.total || 0), 0)
+      return regPoints + promoPoints
+    },
+    commission() {
+      let regComm = (this.products || []).reduce((a, b) => a + ((b.val !== undefined && b.val !== null ? Number(b.val) : Number(b.price)) * (b.total || 0)), 0)
+      let promoComm = (this.promotions || []).reduce((a, b) => a + ((Number(b.val) || 0) * (b.total || 0)), 0)
+      return regComm + promoComm
+    },
+    total()  {
+      let regTotal = (this.products || []).reduce((a, b) => a + (b.total || 0), 0)
+      let promoTotal = (this.promotions || []).reduce((a, b) => a + (b.total || 0), 0)
+      return regTotal + promoTotal
+    },
+
+    cart_eligible_amount() {
+      return (this.products || [])
+        .filter(p => p.total > 0 && !p.is_promo)
+        .reduce((sum, p) => sum + ((Number(p.price) || 0) * (p.total || 0)), 0)
+    },
+    total_eligible() {
+      return Math.round(((this.previous_eligible_amount || 0) + this.cart_eligible_amount) * 100) / 100
+    },
+    current_tramos() {
+      return Math.floor(this.total_eligible / 100)
+    },
+    amount_to_next_tramo() {
+      const rem = Math.round((this.total_eligible % 100) * 100) / 100
+      return rem === 0 ? 100 : Math.round((100 - rem) * 100) / 100
+    },
 
     _price()  { return `Total: $ ${this.price}` },
     _points() { return `A comisionar: ${this.commission}` },
@@ -236,14 +344,18 @@ export default {
 
     filtered() {
       const q = this.search.trim().toLowerCase()
-      return this.products.filter(p => (this.selected.length == 0 || this.selected.includes(p.type)) && (!q || p.name.toLowerCase().includes(q)))
+      return (this.products || []).filter(p => (this.selected.length == 0 || this.selected.includes(p.type)) && (!q || p.name.toLowerCase().includes(q)))
     },
     filters_active() { return this.selected.length > 0 || this.search.trim() != '' },
-    cart() { return this.products.filter(p => p.total > 0) },
-    has_points() { return this.products.some(p => p.points) },
+    cart() {
+      const reg = (this.products || []).filter(p => p.total > 0)
+      const pro = (this.promotions || []).filter(p => p.total > 0)
+      return [...reg, ...pro]
+    },
+    has_points() { return (this.products || []).some(p => p.points) || (this.promotions || []).some(p => p.val) },
 
     categories() {
-      const arr = this.products.map(function(x) { return x.type })
+      const arr = (this.products || []).map(function(x) { return x.type })
 
       let ret = arr.filter(function (v, i, self) {
         return i == self.indexOf(v);
@@ -255,6 +367,9 @@ export default {
   watch: {
     cart_open(open) {
       document.body.style.overflow = open ? 'hidden' : ''
+    },
+    total_eligible() {
+      this.check_promo_quotas()
     },
   },
   beforeDestroy() {
@@ -282,8 +397,16 @@ export default {
 
     this.current_points = data.points
     this.current_profit = data.profit
-    this.products = data.products.map(a => ({ ...a, total: 0 }))
+    this.products = (data.products || []).map(a => ({ ...a, total: 0 }))
     this.product  = this.products[0]
+
+    this.previous_eligible_amount = Number(data.previous_eligible_amount) || 0
+    this.promotions = (data.promotions || []).map(p => ({
+      ...p,
+      total: 0,
+      is_promo: true,
+      promo_id: p.id,
+    }))
 
     this.balance  = data.balance
     this._balance = data._balance
@@ -296,6 +419,49 @@ export default {
 
   },
   methods: {
+    promo_quota(promo) {
+      const unitsPer100 = Math.max(1, parseInt(promo.units_per_100, 10) || 1)
+      const totalEarned = this.current_tramos * unitsPer100
+      const usedUnits = Number(promo.used_units) || 0
+      const available = Math.max(0, totalEarned - usedUnits)
+      const remaining = Math.max(0, available - (promo.total || 0))
+      return { available, remaining, totalEarned, usedUnits }
+    },
+    promo_status_text(promo) {
+      const quota = this.promo_quota(promo)
+      if (quota.available === 0) {
+        const rem = this.amount_to_next_tramo
+        if (quota.usedUnits > 0) {
+          return `Agotaste tu cupo (${quota.usedUnits} usada${quota.usedUnits > 1 ? 's' : ''}). Faltan $${rem.toFixed(2)} para el siguiente tramo.`
+        }
+        return `Te faltan $${rem.toFixed(2)} en compras para habilitar.`
+      }
+      return `Disponibles: ${quota.remaining} de ${quota.available} cupo(s).`
+    },
+    more_promo(promo) {
+      const quota = this.promo_quota(promo)
+      if (promo.total >= quota.available) return
+      promo.total += 1
+    },
+    less_promo(promo) {
+      if (promo.total <= 0) return
+      promo.total -= 1
+    },
+    check_promo_quotas() {
+      if (!this.promotions || this.promotions.length === 0) return
+      for (const promo of this.promotions) {
+        const quota = this.promo_quota(promo)
+        if (promo.total > quota.available) {
+          const oldQty = promo.total
+          promo.total = quota.available
+          if (quota.available === 0) {
+            this.promo_notification = `La promoción "${promo.name}" se retiró del carrito porque tu compra ya no alcanza el tramo de US$100 requerido.`
+          } else {
+            this.promo_notification = `La cantidad de "${promo.name}" se redujo de ${oldQty} a ${quota.available} según tu cupo disponible.`
+          }
+        }
+      }
+    },
     toggle_category(category) {
       const i = this.selected.indexOf(category)
       if (i > -1) this.selected.splice(i, 1)
@@ -350,18 +516,26 @@ export default {
     reset() {
       console.log('reset ...')
 
-      this.products.forEach(product => {
+      ;(this.products || []).forEach(product => {
         product.total = 0
+      })
+      ;(this.promotions || []).forEach(promo => {
+        promo.total = 0
       })
 
       this.voucher = null
       this.file = null
       this.voucher_number = null
       this.clear_voucher2()
+      this.promo_notification = null
     },
     async POST() {
 
-      let { products, office, check, voucher, pay_method, bank, date, voucher_number } = this
+      let { office, check, voucher, pay_method, bank, date, voucher_number } = this
+      const selectedProducts = [
+        ...(this.products || []).filter(p => p.total > 0),
+        ...(this.promotions || []).filter(p => p.total > 0),
+      ]
 
       if (pay_method == 'bank') {
         if (!bank) {
@@ -391,7 +565,7 @@ export default {
         }
       }
 
-      if(!this.total) {
+      if(!this.total || selectedProducts.length === 0) {
         this.error = 'Seleccione productos'
         return
       }
@@ -426,7 +600,7 @@ export default {
         if(use_voucher2) voucher2 = await lib.upload(this.file2, this.file2.name, 'activations')
 
         const res = await api.Activation.POST(this.session, {
-          products,
+          products: selectedProducts,
           voucher,
           office: office.id,
           check,

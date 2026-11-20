@@ -53,7 +53,10 @@
                 <td>{{ activation.date | date }}</td>
                 <td>
                   <div class="shop-prod">
-                    <span v-for="product in activation.products" v-if="product.total != 0">{{ product.name }} × {{ product.total }}</span>
+                    <span v-for="product in activation.products" v-if="product.total != 0">
+                      {{ product.name }} × {{ product.total }}
+                      <small v-if="product.is_promo" class="shop-tag-promo">Promo</small>
+                    </span>
                   </div>
                 </td>
                 <td><b>{{ activation.price | price }}</b></td>

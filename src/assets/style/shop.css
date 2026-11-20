@@ -140,3 +140,25 @@ body>.shop{font-family:"Open Sans",sans-serif}
 .shop-btn.light{background:#fff;color:var(--p);border:2px solid var(--p)}
 .shop-noimg{font-size:44px;opacity:.35;line-height:1}
 .shop-noimg.sm{font-size:20px}
+/* Promociones en tienda */
+.shop-promo-section{margin-bottom:22px}
+.shop-promo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.shop-promo-title{font-size:17px;font-weight:700;color:var(--pd);display:flex;align-items:center;gap:6px;margin:0}
+.shop-promo-quota-pill{background:var(--pl);color:var(--pd);border:1px solid var(--p);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700}
+.shop-card.promo-card{border:2px solid #e0c3fc;background:#fff;transition:transform .2s,box-shadow .2s}
+.shop-card.promo-card:hover{box-shadow:0 6px 16px #0000001a}
+.shop-card.promo-card:before{border-top-color:#ab49cc}
+.shop-card.promo-card .shop-badge{background:linear-gradient(135deg,var(--pd),var(--p))}
+.shop-promo-quota{font-size:11.5px;color:var(--pd);font-weight:700;margin:4px 0 2px}
+.shop-card.promo-card.is-blocked{background:#f1f3f5;border-color:#cbd5e1;box-shadow:none;opacity:.92}
+.shop-card.promo-card.is-blocked:before{border-top-color:#94a3b8}
+.shop-card.promo-card.is-blocked .shop-name{color:#475569}
+.shop-card.promo-card.is-blocked .shop-img img{filter:grayscale(85%);opacity:.65}
+.shop-badge.promo-badge-blocked{background:#64748b}
+.shop-promo-hint{font-size:11px;line-height:1.35;padding:6px 8px;border-radius:6px;margin:6px 0;font-weight:600}
+.shop-promo-hint.blocked{background:#e2e8f0;color:#475569}
+.shop-promo-hint.available{background:#e8f5e9;color:#2e7d32}
+.shop-add.promo-blocked{background:#94a3b8;color:#f8fafc;cursor:not-allowed}
+.shop-promo-alert{background:#fff8e1;border:1px solid #ffe082;color:#795548;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:12.5px;box-shadow:0 2px 6px #0000000d}
+.shop-promo-alert-close{background:none;border:0;color:#795548;font-size:14px;cursor:pointer;font-weight:700;padding:0 4px}
+.shop-tag-promo{background:#f3e8fa;color:var(--pd);border:1px solid #d8b4e2;border-radius:4px;padding:1px 5px;font-size:10px;font-weight:700;margin-left:4px;text-transform:uppercase}
