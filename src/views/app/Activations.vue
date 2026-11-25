@@ -18,8 +18,8 @@
             <b v-if="current_plan">{{ current_plan.name }} · $ {{ current_plan.amount }}</b>
             <small>Acumulados: {{ upgrade_arr }} · Mes {{ upgrade_pos + 1 }}</small>
           </div>
-          <div class="shop-kpi"><small>Total comprado (aprobado)</small><b>$ {{ approved_price.toFixed(2) }}</b></div>
-          <div class="shop-kpi"><small>Puntos (aprobados)</small><b>{{ approved_points }}</b></div>
+          <div class="shop-kpi"><small>Total comprado (aprobado)</small><b>$ {{ fmt2(approved_price) }}</b></div>
+          <div class="shop-kpi"><small>Puntos (aprobados)</small><b>{{ fmt2(approved_points) }}</b></div>
           <div class="shop-kpi"><small>Pedidos</small><b>{{ activations.length }}</b></div>
         </div>
 
@@ -59,8 +59,8 @@
                     </span>
                   </div>
                 </td>
-                <td><b>{{ activation.price | price }}</b></td>
-                <td style="color:var(--p);font-weight:800">{{ activation.points }}</td>
+                <td><b>$ {{ fmt2(activation.price) }}</b></td>
+                <td style="color:var(--p);font-weight:800">{{ fmt2(activation.points) }}</td>
                 <td>
                   <a class="shop-vou" :href="activation.voucher" target="_blank" v-if="activation.voucher">
                     <img :src="activation.voucher">
@@ -124,6 +124,9 @@ export default {
         { value: 'rejected', label: 'Rechazadas' },
       ],
     }
+  },
+  methods: {
+    fmt2(v) { return (Math.round((parseFloat(v) || 0) * 100) / 100).toFixed(2) },
   },
   computed: {
     session() { return this.$store.state.session },
